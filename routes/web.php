@@ -23,9 +23,9 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
-use App\Http\Controllers\ChangePassword;            
-use App\Http\Controllers\CategoryController;            
-            
+use App\Http\Controllers\ChangePassword;
+use App\Http\Controllers\CategoryController;
+
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
 	Route::get('/register', [RegisterController::class, 'create'])->middleware('guest')->name('register');
@@ -42,11 +42,12 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/rtl', [PageController::class, 'rtl'])->name('rtl');
 	Route::get('/profile', [UserProfileController::class, 'show'])->name('profile');
 	Route::post('/profile', [UserProfileController::class, 'update'])->name('profile.update');
-	// Route::get('/profile-static', [PageController::class, 'profile'])->name('profile-static'); 
+	// Route::get('/profile-static', [PageController::class, 'profile'])->name('profile-static');
 	// Route::get('/sign-in-static', [PageController::class, 'signin'])->name('sign-in-static');
-	// Route::get('/sign-up-static', [PageController::class, 'signup'])->name('sign-up-static'); 
+	// Route::get('/sign-up-static', [PageController::class, 'signup'])->name('sign-up-static');
 	// Route::get('/{page}', [PageController::class, 'index'])->name('page');
-	Route::get('/category', [CategoryController::class, 'index'])->name('category'); 
-	Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
+    Route::resource('category', CategoryController::class);
+    Route::post('/category-get-data', [CategoryController::class, 'getData'])->name('category.get-data');
+    Route::get('/category/destroy/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
