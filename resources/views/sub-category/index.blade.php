@@ -7,11 +7,11 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
                 <h5>Category</h5>
-                <a href="{{ route('category.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Category</a>
+                <a href="{{ route('sub-category.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Sub Category</a>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0" id="categoryTable">
+                    <table class="table align-items-center mb-0" id="subCategoryTable">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -22,8 +22,8 @@
                                 </th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                     Status</th>
-                                {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center align-middle">
-                                    Category Id</th> --}}
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center align-middle">
+                                    Category Name</th>
 
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                     Action</th>
@@ -55,11 +55,12 @@
         }
     });
     $(function() {
-        var table = $('#categoryTable').DataTable({
+        var table = $('#subCategoryTable').DataTable({
+
             processing: true
             , serverSide: true
             , ajax: {
-                url: "{{ route('category.get-data') }}"
+                url: "{{ route('subCategory.get-data') }}"
                 , type: "POST"
             }
             , columns: [{
@@ -80,11 +81,11 @@
                 , {
                     data: 'status'
                     , name: 'status'
+                }
+                , {
+                    data: 'cat_id'
+                    , name: 'cat_id'
                 },
-                // {
-                //     data: 'cat_id'
-                //     , name: 'cat_id'
-                // },
 
                 {
                     data: 'action'

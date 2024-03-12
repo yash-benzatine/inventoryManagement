@@ -25,7 +25,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
 use App\Http\Controllers\CategoryController;
-
+use App\Http\Controllers\admin\SubCategoryController;
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
 	Route::get('/register', [RegisterController::class, 'create'])->middleware('guest')->name('register');
@@ -49,5 +49,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('category', CategoryController::class);
     Route::post('/category-get-data', [CategoryController::class, 'getData'])->name('category.get-data');
     Route::get('/category/destroy/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
+    // Route::resource('sub-category', SubCategoryController::class);
+    Route::get('/sub-category/index', [SubCategoryController::class, 'index'])->name('sub-category.index');
+    Route::post('/sub-category-get-data', [SubCategoryController::class, 'getData'])->name('subCategory.get-data');
+    Route::get('/sub-category/destroy/{category}', [SubCategoryController::class, 'destroy'])->name('sub-category.destroy');
+    Route::get('/sub-category/create', [SubCategoryController::class, 'create'])->name('sub-category.create');
+    Route::post('/sub-category/store', [CategoryController::class, 'store'])->name('sub-category.store');
+    Route::get('/sub-category/edit/{categoryId}', [SubCategoryController::class, 'edit'])->name('sub-category.edit');
+    Route::post('/sub-category/update', [SubCategoryController::class, 'update'])->name('sub-category.update');
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
