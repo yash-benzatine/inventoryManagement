@@ -1,31 +1,30 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Category'])
+@include('layouts.navbars.auth.topnav', ['title' => 'Sub Category'])
 <div class="row mt-4 mx-4">
     <div class="col-12">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
-                <h5>Category</h5>
-                <a href="{{ route('category.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Category</a>
+                <h5>Sub Category</h5>
+                <a href="{{ route('sub-category.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Sub Category</a>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0" id="categoryTable">
+                    <table class="table align-items-center mb-0" id="subCategoryTable">
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name
+                                <th>
+                                    Category Name</th>
+                                <th>Sub Category Name
                                 </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                <th>
                                     Description
                                 </th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                <th>
                                     Status</th>
-                                {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center align-middle">
-                                    Category Id</th> --}}
-
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                <th>
                                     Action</th>
                             </tr>
                         </thead>
@@ -55,11 +54,12 @@
         }
     });
     $(function() {
-        var table = $('#categoryTable').DataTable({
+        var table = $('#subCategoryTable').DataTable({
+
             processing: true
             , serverSide: true
             , ajax: {
-                url: "{{ route('category.get-data') }}"
+                url: "{{ route('subCategory.get-data') }}"
                 , type: "POST"
             }
             , columns: [{
@@ -68,6 +68,9 @@
                     , render: function(data, type, row, meta) {
                         return meta.settings._iDisplayStart + meta.row + 1; // Global sequential number
                     }
+                }, {
+                    data: 'cat_id'
+                    , name: 'cat_id'
                 }
                 , {
                     data: 'name'
@@ -80,13 +83,8 @@
                 , {
                     data: 'status'
                     , name: 'status'
-                },
-                // {
-                //     data: 'cat_id'
-                //     , name: 'cat_id'
-                // },
-
-                {
+                }
+                , {
                     data: 'action'
                     , name: 'action'
                     , orderable: false

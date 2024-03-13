@@ -1,26 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
+use App\Models\Purchase;
 use DataTables;
+use App\Models\Product;
 
-class CategoryController extends Controller
+class PurchaseController extends Controller
 {
     public function index(Request $request)
     {
-        return view("category.index");
+        $products = Product::where('status', 1)->get();
+        $datas = Product::where(['status'=> 1, 'id'=>$request->productId])->orderBy('id', 'DESC');
+        return view("admin.purchase.index", compact('products', 'datas'));
     }
 
     public function create()
     {
-        $categories = Category::where('cat_id', '=', 0)->get();
-        return view('category.create', compact('categories'));
+        $products = Product::where('status', 1)->get();
+        return view('admin.purchase.create', compact('products'));
     }
 
     public function store(Request $request)
     {
+      try {
         // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
@@ -59,6 +64,13 @@ class CategoryController extends Controller
 
         // Redirect the user back or to a specific route after successful submission
         return redirect()->route($route)->with($notification);
+        } catch (ValidationException $e) {
+    // Handle validation errors
+    return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -75,7 +87,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         $categories = Category::where('cat_id', '=', 0)->get();
-        return view('category.edit', compact('category', 'categories'));
+        return view('admin.category.edit', compact('category', 'categories'));
     }
 
     /**
@@ -121,28 +133,32 @@ class CategoryController extends Controller
         return redirect()->back()->with(['message'=>'Category deleted successfully', 'alert-type' => 'success']);
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
-        $data = Category::where('cat_id', '=', 0)->orderBy('id', 'DESC');
+        $data = Product::where(['status'=>1, 'id'=>$request->productId])->orderBy('id', 'DESC');
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('status', function ($row) {
                 $status = ($row->status == 1) ? 'active' : 'inactive';
                 $badgeColor = ($row->status == 1) ? 'success' : 'danger';
 
-                return '<div class="align-middle text-center text-sm"><span class="badge badge-sm bg-gradient-' . $badgeColor . '">' . $status . '</span></div>';
+                return '<span class="badge badge-pill badge-sm badge-' . $badgeColor . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 justify-content-center align-items-center"><a href="' . route('category.edit',['category' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
-                <form action="'. route('category.destroy', ['category' => $row]) .'" method="POST">
+                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('product.edit',['product' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                <form action="'. route('product.destroy', ['product' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('category.destroy', ['category' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('product.destroy', ['product' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
                                         </form></div>';
                 return $actionBtn;
             })
             ->rawColumns(['action', 'status'])
             ->make(true);
     }
-
+    public function getData1(Request $request)
+    {
+        $data = Product::where(['id'=>$request->productId])->get();
+        return response()->json(['product'=>$data, 'status'=>1]);
+    }
 }

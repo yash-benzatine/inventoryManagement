@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Category'])
+@include('layouts.navbars.auth.topnav', ['title' => 'Sub Category'])
 <div class="container-fluid my-5 py-2">
     <div class="d-flex justify-content-center mb-5">
         <div class="col-lg-9 mt-lg-0 mt-4">
 
             <div class="card mt-4" id="basic-info">
                 <div class="card-header">
-                    <h5>Edit Category</h5>
+                    <h5>Edit Sub Category</h5>
                 </div>
                 <div class="card-body pt-0">
                     <form method="POST" action="{{ route('category.update', ['category'=> $category]) }}" enctype="multipart/form-data">

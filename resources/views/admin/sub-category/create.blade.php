@@ -1,7 +1,7 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Category'])
+@include('layouts.navbars.auth.topnav', ['title' => 'Sub Category'])
 <div class="row mt-4 mx-4">
     <div class="container-fluid my-5 py-2">
         <div class="d-flex justify-content-center mb-5">
@@ -9,14 +9,14 @@
 
                 <div class="card mt-4" id="basic-info">
                     <div class="card-header">
-                        <h5>New Category</h5>
+                        <h5>New Sub Category</h5>
                     </div>
                     <div class="card-body pt-0">
                         <form method="POST" action="{{ route('sub-category.store') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label class="form-label">Category</label>
+                                    <label class="form-label">Sub Category</label>
                                     <div class="choices" data-type="select-one" tabindex="0" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-expanded="false">
                                         <select class="form-control @error('cat_id') is-invalid @enderror" name="cat_id">
                                             <option value="">Choose</option>

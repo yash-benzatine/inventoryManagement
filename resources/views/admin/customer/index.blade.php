@@ -1,0 +1,122 @@
+@extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
+
+@section('content')
+@include('layouts.navbars.auth.topnav', ['title' => 'Customer'])
+<div class="row mt-4 mx-4">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between">
+                <h5>Customer</h5>
+                <a href="{{ route('customer.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Customer</a>
+            </div>
+            <div class="card-body px-4 pt-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0" id="customerTable">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name
+                                </th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    Email
+                                </th>
+                                <th>
+                                    Phone</th>
+                                <th>
+                                    Address</th>
+                                <th>
+                                    Discount</th>
+                                <th>
+                                    Status</th>
+                                <th>
+                                    Gender</th>
+                                <th>
+                                    Image</th>
+                                <th>
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- <script>
+        const dataTableBasic = new simpleDatatables.DataTable("#CustomerTable", {
+            searchable: true,
+            fixedHeight: true,
+            columns: [{
+                select: [0, 5],
+                sortable: false
+            }]
+        });
+    </script> --}}
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        }
+    });
+    $(function() {
+        var table = $('#customerTable').DataTable({
+            processing: true
+            , serverSide: true
+            , ajax: {
+                url: "{{ route('customer.get-data') }}"
+                , type: "POST"
+            }
+            , columns: [{
+                    data: 'id'
+                    , name: 'id'
+                    , render: function(data, type, row, meta) {
+                        return meta.settings._iDisplayStart + meta.row + 1; // Global sequential number
+                    }
+                }
+                , {
+                    data: 'name'
+                    , name: 'name'
+                }
+                , {
+                    data: 'email'
+                    , name: 'email'
+                }
+                , {
+                    data: 'phone'
+                    , name: 'phone'
+                }
+                , {
+                    data: 'address'
+                    , name: 'address'
+                }
+                , {
+                    data: 'discount'
+                    , name: 'discount'
+                }
+                , {
+                    data: 'status'
+                    , name: 'status'
+                }
+                , {
+                    data: 'gender'
+                    , name: 'gender'
+                }
+                , {
+                    data: 'image'
+                    , name: 'image'
+                }
+                , {
+                    data: 'action'
+                    , name: 'action'
+                    , orderable: false
+                    , searchable: false
+                }
+            , ]
+        });
+    });
+
+</script>
+@endsection

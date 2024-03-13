@@ -24,8 +24,11 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\SubCategoryController;
+use App\Http\Controllers\admin\CustomerController;
+use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\PurchaseController;
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
 	Route::get('/register', [RegisterController::class, 'create'])->middleware('guest')->name('register');
@@ -37,20 +40,19 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 	Route::get('/change-password', [ChangePassword::class, 'show'])->middleware('guest')->name('change-password');
 	Route::post('/change-password', [ChangePassword::class, 'update'])->middleware('guest')->name('change.perform');
 	Route::get('/dashboard', [HomeController::class, 'index'])->name('home')->middleware('auth');
-Route::group(['middleware' => 'auth'], function () {
+    Route::group(['middleware' => 'auth'], function () {
 	Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
 	Route::get('/rtl', [PageController::class, 'rtl'])->name('rtl');
 	Route::get('/profile', [UserProfileController::class, 'show'])->name('profile');
 	Route::post('/profile', [UserProfileController::class, 'update'])->name('profile.update');
-	// Route::get('/profile-static', [PageController::class, 'profile'])->name('profile-static');
-	// Route::get('/sign-in-static', [PageController::class, 'signin'])->name('sign-in-static');
-	// Route::get('/sign-up-static', [PageController::class, 'signup'])->name('sign-up-static');
-	// Route::get('/{page}', [PageController::class, 'index'])->name('page');
+
+
+    //category
     Route::resource('category', CategoryController::class);
     Route::post('/category-get-data', [CategoryController::class, 'getData'])->name('category.get-data');
     Route::get('/category/destroy/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
 
-    // Route::resource('sub-category', SubCategoryController::class);
+    //sub-category
     Route::get('/sub-category/index', [SubCategoryController::class, 'index'])->name('sub-category.index');
     Route::post('/sub-category-get-data', [SubCategoryController::class, 'getData'])->name('subCategory.get-data');
     Route::get('/sub-category/destroy/{category}', [SubCategoryController::class, 'destroy'])->name('sub-category.destroy');
@@ -58,5 +60,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sub-category/store', [CategoryController::class, 'store'])->name('sub-category.store');
     Route::get('/sub-category/edit/{categoryId}', [SubCategoryController::class, 'edit'])->name('sub-category.edit');
     Route::post('/sub-category/update', [SubCategoryController::class, 'update'])->name('sub-category.update');
+
+    //customer
+    Route::resource('customer', CustomerController::class);
+    Route::post('/customer-get-data', [CustomerController::class, 'getData'])->name('customer.get-data');
+    Route::get('/customer/destroy/{customer}', [CustomerController::class, 'destroy'])->name('customer.destroy');
+
+    //product
+    //customer
+    Route::resource('product', ProductController::class);
+    Route::post('/product-get-data', [ProductController::class, 'getData'])->name('product.get-data');
+    Route::get('/product/destroy/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
+
+    //manage-purchase
+    Route::resource('manage-purchase', PurchaseController::class);
+    Route::post('/manage-purchase-get-data', [PurchaseController::class, 'getData1'])->name('manage-purchase.get-data');
+    Route::get('/manage-purchase/destroy/{product}', [PurchaseController::class, 'destroy'])->name('manage-purchase.destroy');
+
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
