@@ -2,8 +2,27 @@
     position: relative;
     display: inline-block;
     width: 100%;
-    height: calc(1.5em + 1.25rem + 2px);
+    /* height: calc(1.5em + 1.25rem + 2px); */
     margin-bottom: 0;
+}
+
+.navbar-vertical .navbar-nav .nav-link[data-toggle='collapse'][aria-expanded='true']:after {
+    transform: rotate(90deg);
+    color: #5e72e4;
+}
+
+.navbar-vertical .navbar-nav .nav-link[data-toggle='collapse']:after {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 700;
+    font-style: normal;
+    font-variant: normal;
+    display: inline-block;
+    margin-left: auto;
+    content: '\f105';
+    transition: all .15s ease;
+    color: #ced4da;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
 }
 
 .custom-file-input {
@@ -361,4 +380,25 @@ a.badge:hover {
 table.dataTable thead th,
 table.dataTable tfoot th {
     font-weight: 600 !important;
+}
+
+.card-wrapper {
+    border: 1px solid #c2cfd6 !important;
+    padding: 2em 1.4em 1.4em !important;
+    margin: 0 0 1.5em !important;
+    box-shadow: 0 0 #000;
+}
+
+.error {
+    color: #e54343;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    /* left: 80px;
+    right: 55px; */
+    background: #f8f9fe;
+    width: inherit;
+    max-width: 83%;
 }

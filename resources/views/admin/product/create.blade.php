@@ -1,7 +1,6 @@
-@extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
-
+@extends('admin.layout.master', ['class' => 'g-sidenav-show bg-gray-100'])
+@section('title', 'Product Create')
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Product'])
 <div class="row mt-4 mx-4">
     <div class="container-fluid my-5 py-2">
         <div class="d-flex justify-content-center mb-5">
@@ -95,6 +94,8 @@
         </div>
     </div>
 </div>
+@endsection
+@section('page-script')
 <script>
     $(document).ready(function() {
         // Function to generate random 8-digit number

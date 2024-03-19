@@ -1,7 +1,6 @@
-@extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
-
+@extends('admin.layout.master', ['class' => 'g-sidenav-show bg-gray-100'])
+@section('title', 'Sub Category Create')
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Sub Category'])
 <div class="row mt-4 mx-4">
     <div class="container-fluid my-5 py-2">
         <div class="d-flex justify-content-center mb-5">
@@ -79,5 +78,6 @@
         </div>
     </div>
 </div>
-<script src="https://argon-dashboard-pro-laravel.creative-tim.com/assets/js/plugins/choices.min.js"></script>
+@endsection
+@section('page-script')
 @endsection

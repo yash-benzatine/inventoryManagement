@@ -1,7 +1,6 @@
-@extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
-
+@extends('admin.layout.master', ['class' => 'g-sidenav-show bg-gray-100'])
+@section('title', 'Sub Category Management')
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Sub Category'])
 <div class="row mt-4 mx-4">
     <div class="col-12">
         <div class="card mb-4">
@@ -37,16 +36,8 @@
         </div>
     </div>
 </div>
-{{-- <script>
-        const dataTableBasic = new simpleDatatables.DataTable("#categoryTable", {
-            searchable: true,
-            fixedHeight: true,
-            columns: [{
-                select: [0, 5],
-                sortable: false
-            }]
-        });
-    </script> --}}
+@endsection
+@section('page-script')
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {
@@ -95,4 +86,5 @@
     });
 
 </script>
+
 @endsection

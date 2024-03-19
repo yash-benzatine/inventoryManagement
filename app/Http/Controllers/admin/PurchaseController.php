@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\Purchase;
 use DataTables;
 use App\Models\Product;
+use App\Models\Supplier;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
+
 
 class PurchaseController extends Controller
 {
@@ -14,62 +19,54 @@ class PurchaseController extends Controller
     {
         $products = Product::where('status', 1)->get();
         $datas = Product::where(['status'=> 1, 'id'=>$request->productId])->orderBy('id', 'DESC');
-        return view("admin.purchase.index", compact('products', 'datas'));
+        $suppliers = Supplier::where('status', 1)->get();
+        return view("admin.purchase.index", compact('products', 'datas', 'suppliers'));
     }
 
-    public function create()
+    public function index2(Request $request)
     {
-        $products = Product::where('status', 1)->get();
-        return view('admin.purchase.create', compact('products'));
+        return view("admin.purchase.purchase");
     }
 
     public function store(Request $request)
     {
       try {
         // Validate the incoming request data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|string', // You might adjust this validation rule as needed
-            'cat_id' => [
-                'required_if:cat_id,0',
-                'required',
-                'integer',
-            ]
-            ],[
-                'cat_id' => 'Please select category.',
+        $validatedData = Validator::make($request->all(), [
+            'purchase_code' => 'required|string|unique:purchases,purchase_code',
+            'supplier_id' => 'required|string',
+            'date' => 'required|date',
+            'total' => 'required|numeric',
+            'amount' => 'required|numeric',
+            'due' => 'required|numeric',
+            'paymentType' => 'required|string',
         ]);
 
-
-        // Create a new category instance
-        $category = new Category();
-        $category->name = $request->input('name');
-        $category->description = $request->input('description');
-        $category->status = $request->input('status');
-        if($request->input('cat_id')){
-            $category->cat_id = $request->input('cat_id');
-            $route = 'sub-category.index';
-            $message = 'Sub category created successfully.';
-        }else{
-            $route = 'category.index';
-            $message = 'Category created successfully.';
+        if ($validatedData->fails()) {
+            return redirect()->back()->withErrors($validatedData)->withInput();
         }
 
-        // Save the category to the database
-        $category->save();
-        $notification = array(
-            'message' => $message,
-            'alert-type' => 'success'
-        );
+        $purchase = new Purchase();
+        $purchase->purchase_code = $request->input('purchase_code');
+        $purchase->product_id = $request->input('data_id');
+        $purchase->supplier_id = $request->input('supplier_id');
+        $purchase->date = $request->input('date');
+        $purchase->total = $request->input('total');
+        $purchase->amount = $request->input('amount');
+        $purchase->due = $request->input('due');
+        $purchase->payment_type = $request->input('paymentType');
 
-        // Redirect the user back or to a specific route after successful submission
-        return redirect()->route($route)->with($notification);
-        } catch (ValidationException $e) {
-    // Handle validation errors
-    return redirect()->back()->withErrors($e->errors())->withInput();
+        // Save the purchase
+        $purchase->save();
+
+        // Redirect back or return a response
+        return redirect()->back()->with(['message'=> 'Purchase created successfully', 'alert-type' => 'success']);
+        } catch (\ValidationException $e) {
+            // Handle validation errors
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
             // Handle other exceptions
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with(['message'=> $e->getMessage(), 'alert-type' => 'warning']);
         }
     }
 
@@ -79,49 +76,6 @@ class PurchaseController extends Controller
     public function show(string $id)
     {
         //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
-    {
-        $categories = Category::where('cat_id', '=', 0)->get();
-        return view('admin.category.edit', compact('category', 'categories'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Category $category)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|string', // You might adjust this validation rule as needed
-            'cat_id' => [
-                'required_if:cat_id,0',
-                'required',
-                'integer',
-            ],
-        ]);
-
-        $category->name = $request->input('name');
-        $category->description = $request->input('description');
-        $category->status = $request->input('status');
-        if($request->has('cat_id')){
-            $category->cat_id = $request->input('cat_id');
-            $route = 'sub-category.index';
-            $message = 'Sub category created successfully.';
-        }else{
-            $route = 'category.index';
-            $message = 'Category created successfully.';
-        }
-        if($category->save()) {
-            return redirect()->route($route)->with(['message' => $message, 'alert-type' => 'success']);
-        }else{
-            return redirect()->back()->with(['message' => 'Data not updated successfully.', 'alert-type' => 'error']);
-        }
     }
 
     /**
@@ -135,14 +89,11 @@ class PurchaseController extends Controller
 
     public function getData(Request $request)
     {
-        $data = Product::where(['status'=>1, 'id'=>$request->productId])->orderBy('id', 'DESC');
+        $data = Purchase::with(['Supplier'])->orderBy('id', 'DESC');
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('status', function ($row) {
-                $status = ($row->status == 1) ? 'active' : 'inactive';
-                $badgeColor = ($row->status == 1) ? 'success' : 'danger';
-
-                return '<span class="badge badge-pill badge-sm badge-' . $badgeColor . '">' . $status . '</span>';
+            ->addColumn('supplier_id', function ($row) {
+                return $row->Supplier->name;
             })
             ->addColumn('action', function ($row) {
                 $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('product.edit',['product' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
@@ -153,12 +104,53 @@ class PurchaseController extends Controller
                                         </form></div>';
                 return $actionBtn;
             })
-            ->rawColumns(['action', 'status'])
+            ->rawColumns(['action', 'supplier_id'])
             ->make(true);
     }
     public function getData1(Request $request)
     {
         $data = Product::where(['id'=>$request->productId])->get();
         return response()->json(['product'=>$data, 'status'=>1]);
+    }
+
+    public function updateProducts(Request $request){
+        $productId = $request->input('productId');
+        $quantity = $request->input('quantity');
+        $field = $request->field;
+        $value = $request->value;
+        // Update the database table here
+        $product = Product::findOrFail($productId);
+        $product[$field] = $value;
+        $product->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function reportIndex(){
+        return view('admin.purchase.report');
+    }
+
+    public function report(Request $request){
+        $data = Purchase::with(['Supplier']);
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $fromDate = Carbon::parse($request->from)->startOfDay(); // Parse and set time to start of day
+            $toDate = Carbon::parse($request->to)->endOfDay(); // Parse and set time to end of day
+
+            $data->whereDate('date', '>=', $fromDate)
+                ->whereDate('date', '<=', $toDate);
+        }
+
+        $data->orderBy('id', 'DESC');
+
+        // Fetch the data
+        $result = $data->get();
+            return Datatables::of($result)
+            ->addIndexColumn()
+            ->addColumn('supplier_id', function ($row) {
+                return $row->Supplier->name;
+            })
+            ->rawColumns(['supplier_id'])
+            ->make(true);
     }
 }

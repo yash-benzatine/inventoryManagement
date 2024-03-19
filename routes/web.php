@@ -29,6 +29,13 @@ use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\CustomerController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\PurchaseController;
+use App\Http\Controllers\admin\SupplierController;
+use App\Http\Controllers\admin\TaxController;
+use App\Http\Controllers\admin\SaleController;
+use App\Http\Controllers\admin\SettingController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
 	Route::get('/register', [RegisterController::class, 'create'])->middleware('guest')->name('register');
@@ -50,7 +57,7 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
     //category
     Route::resource('category', CategoryController::class);
     Route::post('/category-get-data', [CategoryController::class, 'getData'])->name('category.get-data');
-    Route::get('/category/destroy/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
+    Route::get('/category/destroy/{category}', [CategoryController::class, 'destroy'])->name('category.delete');
 
     //sub-category
     Route::get('/sub-category/index', [SubCategoryController::class, 'index'])->name('sub-category.index');
@@ -64,18 +71,63 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
     //customer
     Route::resource('customer', CustomerController::class);
     Route::post('/customer-get-data', [CustomerController::class, 'getData'])->name('customer.get-data');
-    Route::get('/customer/destroy/{customer}', [CustomerController::class, 'destroy'])->name('customer.destroy');
+    Route::get('/customer/destroy/{customer}', [CustomerController::class, 'destroy'])->name('customer.delete');
+
+    //supplier
+    Route::resource('supplier', SupplierController::class);
+    Route::post('/supplier-get-data', [SupplierController::class, 'getData'])->name('supplier.get-data');
+    Route::any('/supplier/del/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.delete');
 
     //product
-    //customer
     Route::resource('product', ProductController::class);
     Route::post('/product-get-data', [ProductController::class, 'getData'])->name('product.get-data');
-    Route::get('/product/destroy/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::get('/product/destroy/{product}', [ProductController::class, 'destroy'])->name('product.delete');
+
+    //tax
+    Route::resource('tax', TaxController::class);
+    Route::post('/tax-get-data', [TaxController::class, 'getData'])->name('tax.get-data');
+    Route::get('/tax/destroy/{tax}', [TaxController::class, 'destroy'])->name('tax.delete');
+    Route::post('/tax/update/{id}', [TaxController::class, 'update']);
 
     //manage-purchase
     Route::resource('manage-purchase', PurchaseController::class);
     Route::post('/manage-purchase-get-data', [PurchaseController::class, 'getData1'])->name('manage-purchase.get-data');
-    Route::get('/manage-purchase/destroy/{product}', [PurchaseController::class, 'destroy'])->name('manage-purchase.destroy');
+    Route::get('/manage-purchase/destroy/{product}', [PurchaseController::class, 'destroy'])->name('manage-purchase.delete');
+    Route::post('/update-product-data', [PurchaseController::class, 'updateProducts']);
+    Route::get('/purchase', [PurchaseController::class, 'index2'])->name('purchase.index');
+    Route::post('/purchase-get-data', [PurchaseController::class, 'getData'])->name('purchase.get-data');
+
+    //manage-sale
+    Route::resource('manage-sale', SaleController::class);
+    Route::post('/manage-sale-get-data', [SaleController::class, 'getData'])->name('manage-sale.get-data');
+    Route::get('/manage-sale/destroy/{product}', [SaleController::class, 'destroy'])->name('manage-sale.delete');
+    Route::post('/update-product-data', [SaleController::class, 'updateProducts']);
+    Route::get('/sale', [SaleController::class, 'index2'])->name('sale.index');
+    Route::post('/sale-get-data', [SaleController::class, 'getData'])->name('sale.get-data');
+    Route::get('/get-sub-categories/{categoryId}', [SaleController::class, 'subCategory']);
+    Route::get('/get-products/{subCategoryId}', [SaleController::class, 'product']);
+
+    //setting
+    Route::resource('setting', SettingController::class);
+    Route::get('/setting/destroy/{product}', [SettingController::class, 'destroy'])->name('setting.delete');
+    Route::get('setting-get-data', [SettingController::class, 'getData'])->name('setting.get-data');
+
+    //report
+    Route::get('sale-index-report', [SaleController::class, 'reportIndex'])->name('saleReport.index');
+    Route::post('sale-report', [SaleController::class, 'report'])->name('sale.report');
+    Route::get('purchase-index-report', [PurchaseController::class, 'reportIndex'])->name('purchaseReport.index');
+    Route::post('purchase-report', [PurchaseController::class, 'report'])->name('purchase.report');
 
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
+
+Auth::routes();
+
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class);
+    Route::post('/users-get-data', [UserController::class, 'getData'])->name('users.get-data');
+    Route::post('/roles-get-data', [RoleController::class, 'getData'])->name('roles.get-data');
+});
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

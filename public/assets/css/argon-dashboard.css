@@ -19724,12 +19724,13 @@ hr.horizontal.gray-light {
     padding: 0;
     box-shadow: none;
     z-index: 9999;
+    overflow-y: hidden;
 }
 
 .navbar-vertical.navbar-expand-xs .navbar-collapse {
     display: block;
     overflow: auto;
-    height: calc(100vh - 360px);
+    /* height: calc(100vh - 360px); */
 }
 
 .navbar-vertical.navbar-expand-xs>[class*="container"] {
@@ -23676,15 +23677,17 @@ pre[class*="language-"] {
     cursor: help;
 }
 
-.ps {
+
+/* .ps {
     overflow: hidden !important;
     overflow-anchor: none;
     -ms-overflow-style: none;
     touch-action: auto;
     -ms-touch-action: auto;
-}
+} */
 
-.ps__rail-x {
+
+/* .ps__rail-x {
     height: 15px;
     bottom: 0;
 }
@@ -23761,7 +23764,7 @@ pre[class*="language-"] {
 .ps__rail-y:hover>.ps__thumb-y {
     background-color: #999;
     width: 11px;
-}
+} */
 
 @supports (-ms-overflow-style: none) {
     .ps {
@@ -25382,7 +25385,8 @@ pre[class*="language-"] {
 .token.entity {
     cursor: help;
 }
-.ps {
+
+/* .ps {
     overflow: hidden !important;
     overflow-anchor: none;
     -ms-overflow-style: none;
@@ -25456,7 +25460,7 @@ pre[class*="language-"] {
 .ps__rail-y:hover>.ps__thumb-y {
     background-color: #999;
     width: 11px;
-}
+} */
 @supports (-ms-overflow-style: none) {
     .ps {
         overflow: auto !important;
@@ -25945,4 +25949,6 @@ screen and (-ms-high-contrast: active) {
 .dark-version h5,
 .dark-version h6 {
     color: #fff!important
+}
+
 }

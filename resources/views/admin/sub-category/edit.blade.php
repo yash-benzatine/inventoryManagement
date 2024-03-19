@@ -1,7 +1,6 @@
-@extends('layouts.app')
-
+@extends('admin.layout.master')
+@section('title', 'Sub Category Edit')
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Sub Category'])
 <div class="container-fluid my-5 py-2">
     <div class="d-flex justify-content-center mb-5">
         <div class="col-lg-9 mt-lg-0 mt-4">
@@ -73,5 +72,6 @@
         </div>
     </div>
 </div>
-<script src="https://argon-dashboard-pro-laravel.creative-tim.com/assets/js/plugins/choices.min.js"></script>
+@endsection
+@section('page-script')
 @endsection

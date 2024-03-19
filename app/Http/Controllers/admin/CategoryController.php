@@ -6,9 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use DataTables;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class CategoryController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:category-list|category-create|category-edit|category-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:category-create', ['only' => ['create','store']]);
+         $this->middleware('permission:category-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:category-delete', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
         return view("admin.category.index");
@@ -62,8 +72,8 @@ class CategoryController extends Controller
         // Redirect the user back or to a specific route after successful submission
         return redirect()->route($route)->with($notification);
         } catch (ValidationException $e) {
-    // Handle validation errors
-    return redirect()->back()->withErrors($e->errors())->withInput();
+            // Handle validation errors
+            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             // Handle other exceptions
             return redirect()->back()->with('error', $e->getMessage());

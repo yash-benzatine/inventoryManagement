@@ -1,304 +1,231 @@
-<!-- ============================================================== -->
-<!-- left sidebar -->
-<!-- ============================================================== -->
-<nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
-    <div class="scrollbar-inner">
-        <!-- Brand -->
-        <div class="sidenav-header  d-flex  align-items-center">
-            <a class="navbar-brand" href="javascript:void(0)">
-                <img src="../../assets/img/brand/blue.png" class="navbar-brand-img" alt="...">
-            </a>
-            <div class=" ml-auto ">
-                <!-- Sidenav toggler -->
-                <div class="sidenav-toggler d-none d-xl-block" data-action="sidenav-unpin" data-target="#sidenav-main">
-                    <div class="sidenav-toggler-inner">
-                        <i class="sidenav-toggler-line"></i>
-                        <i class="sidenav-toggler-line"></i>
-                        <i class="sidenav-toggler-line"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="navbar-inner">
-            <!-- Collapse -->
-            <div class="collapse navbar-collapse" id="sidenav-collapse-main">
-                <!-- Nav items -->
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#navbar-dashboards" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-dashboards">
-                            <i class="ni ni-shop text-primary"></i>
-                            <span class="nav-link-text">Dashboards</span>
-                        </a>
-                        <div class="collapse show" id="navbar-dashboards">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="../../pages/dashboards/dashboard.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> D </span>
-                                        <span class="sidenav-normal"> Dashboard </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/dashboards/alternative.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> A </span>
-                                        <span class="sidenav-normal"> Alternative </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#navbar-examples" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-examples">
-                            <i class="ni ni-ungroup text-orange"></i>
-                            <span class="nav-link-text">Examples</span>
-                        </a>
-                        <div class="collapse" id="navbar-examples">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/pricing.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> P </span>
-                                        <span class="sidenav-normal"> Pricing </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/login.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> L </span>
-                                        <span class="sidenav-normal"> Login </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/register.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> R </span>
-                                        <span class="sidenav-normal"> Register </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/lock.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> L </span>
-                                        <span class="sidenav-normal"> Lock </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/timeline.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> T </span>
-                                        <span class="sidenav-normal"> Timeline </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/profile.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> P </span>
-                                        <span class="sidenav-normal"> Profile </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/examples/rtl-support.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> RP </span>
-                                        <span class="sidenav-normal"> RTL Support </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#navbar-components" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-components">
-                            <i class="ni ni-ui-04 text-info"></i>
-                            <span class="nav-link-text">Components</span>
-                        </a>
-                        <div class="collapse" id="navbar-components">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="../../pages/components/buttons.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> B </span>
-                                        <span class="sidenav-normal"> Buttons </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/components/cards.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> C </span>
-                                        <span class="sidenav-normal"> Cards </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/components/grid.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> G </span>
-                                        <span class="sidenav-normal"> Grid </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/components/notifications.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> N </span>
-                                        <span class="sidenav-normal"> Notifications </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/components/icons.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> I </span>
-                                        <span class="sidenav-normal"> Icons </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/components/typography.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> T </span>
-                                        <span class="sidenav-normal"> Typography </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#navbar-multilevel" class="nav-link" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-multilevel">
-                                        <span class="sidenav-mini-icon"> M </span>
-                                        <span class="sidenav-normal"> Multi level </span>
-                                    </a>
-                                    <div class="collapse show" id="navbar-multilevel" style="">
-                                        <ul class="nav nav-sm flex-column">
-                                            <li class="nav-item">
-                                                <a href="#!" class="nav-link ">Third level menu</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#!" class="nav-link ">Just another link</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#!" class="nav-link ">One last link</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#navbar-forms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-forms">
-                            <i class="ni ni-single-copy-04 text-pink"></i>
-                            <span class="nav-link-text">Forms</span>
-                        </a>
-                        <div class="collapse" id="navbar-forms">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="../../pages/forms/elements.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> E </span>
-                                        <span class="sidenav-normal"> Elements </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/forms/components.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> C </span>
-                                        <span class="sidenav-normal"> Components </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/forms/validation.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> V </span>
-                                        <span class="sidenav-normal"> Validation </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
-                            <i class="ni ni-align-left-2 text-default"></i>
-                            <span class="nav-link-text">Tables</span>
-                        </a>
-                        <div class="collapse" id="navbar-tables">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="../../pages/tables/tables.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> T </span>
-                                        <span class="sidenav-normal"> Tables </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/tables/sortable.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> S </span>
-                                        <span class="sidenav-normal"> Sortable </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/tables/datatables.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> D </span>
-                                        <span class="sidenav-normal"> Datatables </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#navbar-maps" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-maps">
-                            <i class="ni ni-map-big text-primary"></i>
-                            <span class="nav-link-text">Maps</span>
-                        </a>
-                        <div class="collapse" id="navbar-maps">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="../../pages/maps/google.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> G </span>
-                                        <span class="sidenav-normal"> Google </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="../../pages/maps/vector.html" class="nav-link">
-                                        <span class="sidenav-mini-icon"> V </span>
-                                        <span class="sidenav-normal"> Vector </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../pages/widgets.html">
-                            <i class="ni ni-archive-2 text-green"></i>
-                            <span class="nav-link-text">Widgets</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../pages/charts.html">
-                            <i class="ni ni-chart-pie-35 text-info"></i>
-                            <span class="nav-link-text">Charts</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../pages/calendar.html">
-                            <i class="ni ni-calendar-grid-58 text-red"></i>
-                            <span class="nav-link-text">Calendar</span>
-                        </a>
-                    </li>
-                </ul>
-                <!-- Divider -->
-                <hr class="my-3">
-                <!-- Heading -->
-                <h6 class="navbar-heading p-0 text-muted">
-                    <span class="docs-normal">Documentation</span>
-                    <span class="docs-mini">D</span>
-                </h6>
-                <!-- Navigation -->
-                <ul class="navbar-nav mb-md-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-pro/docs/getting-started/overview.html" target="_blank">
-                            <i class="ni ni-spaceship"></i>
-                            <span class="nav-link-text">Getting started</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-pro/docs/foundation/colors.html" target="_blank">
-                            <i class="ni ni-palette"></i>
-                            <span class="nav-link-text">Foundation</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-pro/docs/components/alerts.html" target="_blank">
-                            <i class="ni ni-ui-04"></i>
-                            <span class="nav-link-text">Components</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard-pro/docs/plugins/charts.html" target="_blank">
-                            <i class="ni ni-chart-pie-35"></i>
-                            <span class="nav-link-text">Plugins</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+<aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
+    <div class="sidenav-header">
+        <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+        <a class="navbar-brand m-0" href="{{ route('home') }}" target="_blank">
+            <img src="{{ asset('img/logo-ct-dark.png') }}" class="navbar-brand-img h-100" alt="main_logo">
+            <span class="ms-1 font-weight-bold">Inventory Management</span>
+        </a>
     </div>
-</nav>
+    <hr class="horizontal dark mt-0">
+    <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link {{ Route::currentRouteName() == 'home' ? 'active' : '' }}" href="{{ route('home') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ str_contains(request()->url(), 'customer') == true ? 'active' : '' }}" href="{{ route('customer.index') }}">
 
-<!-- ============================================================== -->
-<!-- end left sidebar -->
-<!-- ============================================================== -->
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-user text-primary fa-solid text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Customer</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ str_contains(request()->url(), 'suppliers') == true ? 'active' : '' }}" href="{{ route('supplier.index') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-truck text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Supplier</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ str_contains(request()->url(), 'tax') == true ? 'active' : '' }}" href="{{ route('tax.index') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-percent text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Tax</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ str_contains(request()->url(), 'users') == true ? 'active' : '' }}" href="{{ route('users.index') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-users text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Manage Users</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ str_contains(request()->url(), 'roles') == true ? 'active' : '' }}" href="{{ route('roles.index') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-users text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Manage Roles</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#navbar-maps" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-maps">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-product-hunt text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Product Manage</span>
+                </a>
+                <div class="collapse" id="navbar-maps" style="">
+                    <ul class="nav nav-sm flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'category') == true ? 'active' : '' }}" href="{{ route('category.index') }}">
+                                {{--
+                                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Category</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'sub-category') == true ? 'active' : '' }}" href="{{ route('sub-category.index') }}">
+
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Sub Category</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'product') == true ? 'active' : '' }}" href="{{ route('product.index') }}">
+
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Product</span>
+                            </a>
+                        </li>
+
+                        {{-- <li class="nav-item">
+                            <a href="../pages/maps/google.html" class="nav-link">
+                                <span class="sidenav-mini-icon"> G </span>
+                                <span class="sidenav-normal"> Google </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../pages/maps/vector.html" class="nav-link">
+                                <span class="sidenav-mini-icon"> V </span>
+                                <span class="sidenav-normal"> Vector </span>
+                            </a>
+                        </li> --}}
+                    </ul>
+                </div>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#navbar-purchases" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-maps">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-shopping-basket text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Manage Purchases</span>
+                </a>
+                <div class="collapse" id="navbar-purchases" style="">
+                    <ul class="nav nav-sm flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'manage-purchase') == true ? 'active' : '' }}" href="{{ route('manage-purchase.index') }}">
+
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">New Purchase</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'purchase') == true ? 'active' : '' }}" href="{{ route('purchase.index') }}">
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Purchase History</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#navbar-sale" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-maps">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-credit-card text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Manage Sales</span>
+                </a>
+                <div class="collapse" id="navbar-sale" style="">
+                    <ul class="nav nav-sm flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'manage-sale') == true ? 'active' : '' }}" href="{{ route('manage-sale.index') }}">
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">New Sale</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'sale') == true ? 'active' : '' }}" href="{{ route('sale.index') }}">
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Sale History</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#navbar-report" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-maps">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-bug text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Report</span>
+                </a>
+                <div class="collapse" id="navbar-report" style="">
+                    <ul class="nav nav-sm flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'purchase-index-report') == true ? 'active' : '' }}" href="{{ route('purchaseReport.index') }}">
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Purchase Report</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ str_contains(request()->url(), 'sale-index-report') == true ? 'active' : '' }}" href="{{ route('saleReport.index') }}">
+                                {{-- <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="ni ni-bullet-list-67 text-dark text-sm opacity-10"></i>
+                                </div> --}}
+                                <span class="nav-link-text ms-1">Sales Report</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ Route::currentRouteName() == 'profile' ? 'active' : '' }}" href="{{ route('profile') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Profile</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link {{ str_contains(request()->url(), 'setting') == true ? 'active' : '' }}" href="{{ route('setting.index') }}">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni fa fa-cog text-primary text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Setting</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</aside>
