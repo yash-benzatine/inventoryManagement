@@ -44,8 +44,9 @@ class CustomerController extends Controller
         $customer->gender = $request->gender;
 
         // Handle file upload if present
-        if ($request->input('image')) {
+        if ($request->file('image')) {
             $image = $request->file('image');
+            // dd($image);
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('admin/customer'), $imageName);
             $customer->image = $imageName;
@@ -100,8 +101,8 @@ class CustomerController extends Controller
         $customer->gender = $request->gender;
 
         // Handle file upload if present
-        if ($request->hasFile('file')) {
-            $image = $request->file('file');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('admin/customer'), $imageName);
             $customer->image = $imageName;
@@ -111,7 +112,7 @@ class CustomerController extends Controller
         $customer->save();
 
         // Redirect back with success message
-        return redirect()->route('customer.index')->with(['message'=>'Customer created successfully', 'alert-type' => 'success']);
+        return redirect()->route('customer.index')->with(['message'=>'Customer updated successfully', 'alert-type' => 'success']);
     }
 
     /**
@@ -148,11 +149,11 @@ class CustomerController extends Controller
                 return '<span class="badge badge-pill badge-'. $badgeColor .'">' . $gender . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('customer.edit',['customer' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('customer.edit',['customer' => $row->id]). '" class="btn btn-primary btn-icon-only mx-2" title="Edit Customer"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('customer.destroy', ['customer' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('customer.destroy', ['customer' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('customer.delete', ['customer' => $row]) .'" class="btn btn-danger btn-icon-only" title="Delete Supplier"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></a>
                                         </form></div>';
                 return $actionBtn;
             })

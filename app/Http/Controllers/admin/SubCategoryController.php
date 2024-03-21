@@ -78,6 +78,7 @@ class SubCategoryController extends Controller
             'cat_id' => 'required|integer',
         ]);
 
+        dd($status);
         $category->name = $request->input('name');
         $category->description = $request->input('description');
         $category->status = $request->input('status');
@@ -114,11 +115,11 @@ class SubCategoryController extends Controller
                 return '<span class="badge badge-pill badge-sm badge-' . $badgeColor . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('sub-category.edit', $row->id). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                $actionBtn = '<div class="d-flex align-items-center"><a href="' . route('sub-category.edit', $row->id). '" class="btn btn-primary btn-icon-only mx-2"><span class="btn-inner--icon" title="Edit Sub Category"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('sub-category.destroy', ['category' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('sub-category.destroy', ['category' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('sub-category.destroy', ['category' => $row]) .'" class="btn btn-danger btn-icon-only" title="Delete Sub Category"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></a>
                                         </form></div>';
                 return $actionBtn;
             })

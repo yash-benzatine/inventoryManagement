@@ -6,7 +6,7 @@
         <div class="row gx-4">
             <div class="col-auto">
                 <div class="avatar avatar-xl position-relative">
-                    <img src="/img/team-1.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                    <img src="{{ auth()->user()->image ? asset('admin/setting/'. auth()->user()->image) : '/img/team-1.jpg' }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
                 </div>
             </div>
             <div class="col-auto my-auto">
@@ -47,7 +47,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <form role="form" method="POST" action={{ route('profile.update') }} enctype="multipart/form-data">
+                <form role="form" method="POST" action="{{ route('setting.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="card-header pb-0">
                         <div class="d-flex align-items-center">

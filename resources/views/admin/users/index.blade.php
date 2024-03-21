@@ -2,14 +2,13 @@
 @section('title', 'User Management')
 
 @section('content')
-<div class="dashboard-wrapper">
-    <div class="container-fluid  dashboard-content">
-        <div class="card">
-            <div class="card-header">
-                @can('create-user')
-                <div class="pull-right">
-                    <a class="btn btn-success" href="{{ route('users.create') }}"> Create New User</a>
-                </div>
+<div class="row mt-4 mx-4">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between">
+                <h5>User Management</h5>
+                @can('user-create')
+                <a class="btn btn-dark" href="{{ route('users.create') }}"> Create New User</a>
                 @endcan
             </div>
 
@@ -30,7 +29,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <!-- Modal -->

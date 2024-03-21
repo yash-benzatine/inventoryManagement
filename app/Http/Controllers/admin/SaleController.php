@@ -14,6 +14,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use App\Models\Tax;
 use Carbon\Carbon;
+use App\Models\SaleHistory;
 
 
 class SaleController extends Controller
@@ -62,7 +63,6 @@ class SaleController extends Controller
 
         $sale = new Sale();
         $sale->invoice_code = $request->input('invoice_code');
-        $sale->product_id = $request->input('data_id');
         $sale->customer = $request->input('customer_id');
         $sale->date = $request->input('date');
         $sale->sub_total = $request->input('sub_total');
@@ -72,9 +72,16 @@ class SaleController extends Controller
         $sale->received_amount = $request->input('received_amount');
         $sale->due = $request->input('due');
         $sale->payment_type = $request->input('paymentType');
+        if($sale->save()){
+            foreach ($request->input('data_id') as $key => $productId) {
+                $saleHistory = new SaleHistory();
+                $saleHistory->sale_id = $sale->id; // Set the product ID
+                $saleHistory->product_id = $productId;
+                $saleHistory->quantity = $request->input('sale_quantity')[$key]; // Set the purchase quantity for this product
+                $saleHistory->save();
+            }
+        }
 
-        // Save the sale
-        $sale->save();
 
         // Redirect back or return a response
         return redirect()->back()->with(['message'=> 'sale created successfully', 'alert-type' => 'success']);
@@ -156,13 +163,14 @@ class SaleController extends Controller
                 return $row->Customer->name;
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('product.edit',['product' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
-                <form action="'. route('product.destroy', ['product' => $row]) .'" method="POST">
-                                            '.csrf_field().'
-                                            '.method_field('DELETE').'
-                                        <a href="'. route('product.destroy', ['product' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
-                                        </form></div>';
-                return $actionBtn;
+                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('sale.show', $row->id). '" class="btn btn-primary mx-2" title="Sale Detail View"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
+
+                if($row->due != 0){
+                    $action = '<a href="'. route('product.destroy', ['product' => $row]) .'" class="btn btn-info" title="Due Sale"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
+                }else{
+                    $action = '<a href="#" class="btn btn-success" title="Paid Sale"><span class="btn-inner--icon"><i class="fab fa fa-money mx-2"></i>Paid</a></div>';
+                }
+                return $actionBtn. $action;
             })
             ->rawColumns(['action', 'customer'])
             ->make(true);
@@ -184,15 +192,17 @@ class SaleController extends Controller
 
     public function updateProducts(Request $request){
         $productId = $request->input('productId');
-        $quantity = $request->input('quantity');
-        $field = $request->field;
-        $value = $request->value;
-        // Update the database table here
-        $product = Product::findOrFail($productId);
-        $product[$field] = $value;
-        $product->save();
-
-        return response()->json(['success' => true]);
+        if($request->has('quantity')){
+            return response()->json(['success' => true]);
+        }else{
+            $field = $request->field;
+            $value = $request->value;
+            // Update the database table here
+            $product = Product::findOrFail($productId);
+            $product[$field] = $value;  
+            $product->save();
+            return response()->json(['success' => true]);
+        }
     }
 
     public function reportIndex(){
@@ -217,5 +227,11 @@ class SaleController extends Controller
             })
             ->rawColumns(['customer'])
             ->make(true);
+    }
+
+    public function invoice($saleId){
+        $sale =  SaleHistory::with(['Product'])->where('sale_id', $saleId)->get();
+        $sale1 = Sale::with(['Customer'])->where('id', $saleId)->first();
+        return view('admin.manage-sales.invoice', compact('sale', 'sale1'));
     }
 }

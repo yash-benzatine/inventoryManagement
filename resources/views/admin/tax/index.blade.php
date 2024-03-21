@@ -6,7 +6,7 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
                 <h5>Tax</h5>
-                <button class="btn bg-gradient-dark btn-sm float-end mb-0" data-toggle="modal" data-target="#exampleModalLong">Add Tax</button>
+                <button class="btn btn-dark" data-toggle="modal" data-target="#exampleModalLong">Add Tax</button>
             </div>
 
             <div class="card-body px-4 pt-0 pb-2">
@@ -175,9 +175,17 @@
                 , contentType: false
                 , success: function(response) {
                     if (response.alert === 'success') {
+                        $('#taxTable').DataTable().ajax.reload();
                         // Display success message
                         $('#exampleModalLong').hide();
                         toastr.success(response.message, 'Success');
+                        $('#taxForm')[0].reset();
+
+                        $('.modal-backdrop').hide();
+                        
+                        // Optionally, remove validation classes and messages
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('.invalid-feedback').empty();
                     } else {
                         console.log(response);
                     }
@@ -220,9 +228,17 @@
                 , contentType: false
                 , success: function(response) {
                     if (response.alert === 'success') {
+                        $('#taxTable').DataTable().ajax.reload();
                         // Display success message
                         $('#editTax').hide();
                         toastr.success(response.message, 'Success');
+                        $('#editTaxForm')[0].reset();
+
+                        $('.modal-backdrop').hide();
+                        
+                        // Optionally, remove validation classes and messages
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('.invalid-feedback').empty();
                     } else {
                         console.log(response);
                     }

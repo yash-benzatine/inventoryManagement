@@ -13,6 +13,7 @@
                     <div class="card-body pt-0">
                         <form method="POST" action="{{ route('category.update', ['category'=>$category]) }}" enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-6">
                                     <label class="form-label">Name</label>

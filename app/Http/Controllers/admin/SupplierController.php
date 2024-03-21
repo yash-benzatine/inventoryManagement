@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 use App\Models\Supplier;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 
 class SupplierController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:supplier-list|supplier-create|supplier-edit|supplier-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:supplier-create', ['only' => ['create','store']]);
+         $this->middleware('permission:supplier-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:supplier-delete', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
         return view("admin.supplier.index");
@@ -41,14 +52,22 @@ class SupplierController extends Controller
 
             }
 
+        
+            $supplier = new Supplier();
+            $supplier->company_name = $request->company_name;
+            $supplier->phone = $request->phone;
+            $supplier->name = $request->name;
+            $supplier->email = $request->email;
+            $supplier->status = $request->status;
             // Handle file upload if an image is provided
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('admin/supplier');
-                $validatedData['image'] = $imagePath;
+            if ($request->file('image')) {
+                $image = $request->file('image');
+                // dd($image);
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('admin/supplier'), $imageName);
+                $supplier->image = $imageName;
             }
-
-            // Create a new Supplier instance with the validated data
-            Supplier::create($request->all());
+            $supplier->save();
 
             $notification = [
                 'message' => "Supplier created successfully.",
@@ -112,12 +131,20 @@ class SupplierController extends Controller
 
             // Handle file upload if an image is provided
             if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('admin/supplier');
-                $validatedData['image'] = $imagePath;
+                $image = $request->file('image');
+                // dd($image);
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('admin/supplier'), $imageName);
+                $supplier->image = $imageName;
             }
 
-            // Create a new Supplier instance with the validated data
-            $supplier->update($request->all());
+            $supplier->company_name = $request->company_name;
+            $supplier->phone = $request->phone;
+            $supplier->name = $request->name;
+            $supplier->email = $request->email;
+            $supplier->status = $request->status;
+
+            $supplier->update();
 
             $notification = [
                 'message' => "Supplier updated successfully.",
@@ -173,14 +200,16 @@ class SupplierController extends Controller
                 return '<span class="badge badge-pill badge-'. $badgeColor .'">' . $gender . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a class="edit-btn" data-toggle="modal" data-target="#editSupplier" data-id="'. $row->id .'"><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="#" data-toggle="modal" data-target="#editSupplier" data-id="'. $row->id .'" class="btn btn-primary btn-icon-only edit-btn mx-2" title="Edit Supplier">
+                <span class="btn-inner--icon"><i class="fab fa fa-edit"></i></span>
+              </a>
                 <form action="'. route('supplier.delete', ['supplier' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('supplier.delete', ['supplier' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('supplier.delete', ['supplier' => $row]) .'" class="btn btn-danger btn-icon-only" title="Delete Supplier"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></a>
                                         </form></div>';
                 return $actionBtn;
-            })
+            })  
             ->rawColumns(['action','status', 'gender','image'])
             ->make(true);
     }

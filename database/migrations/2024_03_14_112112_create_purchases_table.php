@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('date');
             $table->integer('total')->nullable();
             $table->integer('amount')->nullable();
-            $table->decimal('due', 10, 2)->nullable();
+            $table->integer('due', 10, 2)->nullable();
             $table->string('payment_type')->nullable();
             $table->timestamps();
             $table->softDeletes();

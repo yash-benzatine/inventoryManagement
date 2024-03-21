@@ -3,15 +3,16 @@
 Role Management
 @endsection
 @section('content')
-<div class="dashboard-wrapper">
-    <div class="container-fluid  dashboard-content">
-        <div class="card">
-            <div class="card-header">Manage Roles</div>
-            <div class="card-body">
-                @can('create-role')
-                <a href="{{ route('roles.create') }}" class="btn btn-success btn-sm my-2"><i class="bi bi-plus-circle"></i> Add New Role</a>
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between">
+                <h5>Manage Roles</h5>
+                @can('role-create')
+                    <a href="{{ route('roles.create') }}" class="btn btn-dark"><i class="bi bi-plus-circle"></i> Add New Role</a>
                 @endcan
-                <table class="table align-items-center mb-0" id="roleTable">
+            </div>
+            <div class="card-body">
+                <table class="table align-items-center mb-0 mt-3" id="roleTable">
                     <thead>
                         <tr>
                             <th scope="col">Id</th>
@@ -25,7 +26,6 @@ Role Management
             </div>
         </div>
     </div>
-</div>
 @endsection
 @section('page-script')
 <script>

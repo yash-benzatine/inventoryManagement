@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <button type="button" class="btn btn-danger">PDF Download</button>
+                        <button type="button" class="btn btn-danger"  id="downloadPDF">PDF Download</button>
                     </div>
 
                 </div>
@@ -61,6 +61,12 @@
 </div>
 @endsection
 @section('page-script')
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.12/jspdf.plugin.autotable.min.js"></script>
+
+
+
 <script type="text/javascript">
     $(function() {
         var table = $('#saleTable').DataTable({
@@ -131,6 +137,45 @@
         });
 
     });
+
+var doc = new jsPDF();
+    var specialElementHandlers = {
+        '#editor': function(element, renderer) {
+            return true;
+        }
+    };
+
+    $('#downloadPDF').click(function() {
+    // Get the DataTable instance
+    var table = $('#saleTable').DataTable();
+    
+    // Get the table data
+    var data = table.data().toArray();
+    
+    // Create an array to hold table headers
+    var headers = ['Id', 'Invoice Code', 'Customer Name', 'Sub Total', 'Discount', 'VAT', 'Grand Total', 'Due', 'Received Amount', 'Payment Type', 'Date'];
+    
+    // Prepare table content for PDF
+    var content = [headers];
+    data.forEach(function(row) {
+        var rowData = [];
+        Object.values(row).forEach(function(value) {
+            rowData.push(value);
+        });
+        content.push(rowData);
+    });
+    
+    // Generate PDF
+    var doc = new jsPDF();
+    doc.autoTable({
+        head: [content[0]],
+        body: content.slice(1),
+        styles: { fontSize: 10 }
+    });
+    
+    // Save the PDF 
+    doc.save('sales_report.pdf');
+});
 
 </script>
 @endsection

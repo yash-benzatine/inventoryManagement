@@ -6,7 +6,7 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
                 <h5>Product</h5>
-                <a href="{{ route('product.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Product</a>
+                <a href="{{ route('product.create') }}" class="btn btn-dark">Add Product</a>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 <div class="table-responsive p-0">
@@ -19,6 +19,8 @@
                                 <th>Purchase Price</th>
                                 <th>Selling Price</th>
                                 <th>Image</th>
+                                <th>Quantity</th>
+                                <th>Inventory</th>
                                 <th>Note</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -75,6 +77,13 @@
                 , {
                     data: 'image'
                     , name: 'image'
+                }, {
+                    data: 'quantity'
+                    , name: 'quantity'
+                }
+                , {
+                    data: 'inventory'
+                    , name: 'inventory'
                 }
                 , {
                     data: 'note'

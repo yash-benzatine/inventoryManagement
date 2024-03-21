@@ -8,9 +8,21 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Tax;
 use DataTables;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 
 class TaxController extends Controller
 {
+
+    function __construct()
+    {
+         $this->middleware('permission:tax-list|tax-create|tax-edit|tax-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:tax-create', ['only' => ['create','store']]);
+         $this->middleware('permission:tax-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:tax-delete', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
         return view("admin.tax.index");
@@ -112,11 +124,11 @@ class TaxController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="#" data-toggle="modal" data-target="#editTax" data-id="'. $row->id .'" class="edit-btn"><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                $actionBtn = '<div class="d-flex align-items-center"><a href="#" data-toggle="modal" data-target="#editTax" data-id="'. $row->id .'" class="btn btn-primary btn-icon-only edit-btn mx-2" title="Edit Tax"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('tax.delete', ['tax' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('tax.delete', ['tax' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('tax.delete', ['tax' => $row]) .'" class="btn btn-danger btn-icon-only" title="Delete Tax"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></a>
                                         </form></div>';
                 return $actionBtn;
             })

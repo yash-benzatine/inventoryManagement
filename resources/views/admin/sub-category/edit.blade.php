@@ -53,8 +53,8 @@
                                 <label class="form-label">Status</label>
                                 <div class="choices" data-type="select-one" tabindex="0" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-expanded="false">
                                     <select class="form-control @error('status') is-invalid @enderror" name="status">
-                                        <option value="{{ $category->status }}" {{ $category->status == '1' ? 'selected' : '' }}>Active</option>
-                                        <option value="{{ $category->status }}" {{ $category->status == '0' ? 'selected' : '' }}>Inactive</option>
+                                        <option value="1" {{ $category->status == '1' ? 'selected' : '' }}>Active</option>
+                                        <option value="0" {{ $category->status == '0' ? 'selected' : '' }}>Inactive</option>
                                     </select>
                                     @error('status')
                                     <div class="invalid-feedback">{{ $message }}</div>

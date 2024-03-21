@@ -56,8 +56,8 @@
 @endsection
 @section('page-script')
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.12/jspdf.plugin.autotable.min.js"></script>
 
 
 <script type="text/javascript">
@@ -124,12 +124,35 @@
     };
 
     $('#downloadPDF').click(function() {
-        doc.fromHTML($('#purchaseTable').html(), 15, 15, {
-            'width': 170
-            , 'elementHandlers': specialElementHandlers
+    // Get the DataTable instance
+    var table = $('#purchaseTable').DataTable();
+    
+    // Get the table data
+    var data = table.data().toArray();
+    
+    // Create an array to hold table headers
+    var headers = ['Id', 'Purchase Code', 'Supplier Name', 'Amount', 'Due', 'Date'];
+    
+    // Prepare table content for PDF
+    var content = [headers];
+    data.forEach(function(row) {
+        var rowData = [];
+        Object.values(row).forEach(function(value) {
+            rowData.push(value);
         });
-        doc.save('sample-file.pdf');
+        content.push(rowData);
     });
+    
+    // Generate PDF
+    var doc = new jsPDF();
+    doc.autoTable({
+        head: [content[0]],
+        body: content.slice(1)
+    });
+    
+    // Save the PDF
+    doc.save('purchase_report.pdf');
+});
 
 </script>
 @endsection

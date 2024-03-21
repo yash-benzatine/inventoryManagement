@@ -11,6 +11,8 @@ use Illuminate\Http\RedirectResponse;
 use DataTables;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 
 class RoleController extends Controller
@@ -54,16 +56,28 @@ class RoleController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
-            'name' => 'required|unique:roles,name',
-            'permission' => 'required',
-        ]);
+        try {
 
-        $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($request->input('permission'));
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:roles,name',
+                'permissions' => 'required',
+            ]);
 
-        return redirect()->route('admin.roles.index')
-                        ->with('success','Role created successfully');
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+
+            $role = Role::create(['name' => $request->input('name')]);
+            $role->syncPermissions($request->input('permission'));
+
+            return redirect('/roles')->with(['message'=> 'Role created successfully', 'alert-type' => 'success']);
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return back()->withErrors($e->validator->errors())->withInput();
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return back()->with(['message' => $e->getMessage(), 'alert-type' => 'warning']);
+        }
     }
     /**
      * Display the specified resource.
@@ -128,8 +142,8 @@ class RoleController extends Controller
     public function destroy($id): RedirectResponse
     {
         DB::table("roles")->where('id',$id)->delete();
-        return redirect()->route('admin.roles.index')
-                        ->with('success','Role deleted successfully');
+        return redirect()->back()
+                        ->with(['message'=> 'Role deleted successfully', 'alert-type'=> 'success']);
     }
 
     public function getData()
@@ -140,16 +154,15 @@ class RoleController extends Controller
             ->addColumn('action', function ($role) {
                 $actionBtn = '<form action="' . route('roles.destroy', $role->id) . '" method="post">' .
                                 csrf_field() .
-                                method_field('DELETE') .
-                                '<a href="' . route('roles.show', $role->id) . '" class="btn btn-warning btn-sm"><i class="bi bi-eye"></i> Show</a>';
+                                method_field('DELETE');
 
                 if ($role->name != 'Super Admin') {
                     if (Gate::allows('role-edit')) {
-                        $actionBtn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>';
+                        $actionBtn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-primary btn-icon-only mx-2" title="Role Edit"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>';
                     }
 
                     if (Gate::allows('role-delete')) {
-                        $actionBtn .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Do you want to delete this role?\');"><i class="bi bi-trash"></i> Delete</button>';
+                        $actionBtn .= '<button type="submit" class="btn btn-danger btn-icon-only" onclick="return confirm(\'Do you want to delete this role?\');" title="Delete Role"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></button>';
                     }
                 }
 

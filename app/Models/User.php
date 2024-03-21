@@ -29,7 +29,11 @@ class User extends Authenticatable
         'city',
         'country',
         'postal',
-        'about'
+        'about',
+        'company_name',
+        'currency',
+        'phone',
+        'image'
     ];
 
     /**

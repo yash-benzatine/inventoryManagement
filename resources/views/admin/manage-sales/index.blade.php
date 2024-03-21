@@ -7,7 +7,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
                     <h5>Manage Sale</h5>
-                    {{-- <a href="{{ route('manage-sale.index') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Manage Sale</a> --}}
+                    {{-- <a href="{{ route('manage-sale.index') }}" class="btn btn-dark">Add Manage Sale</a> --}}
                 </div>
                 <div class="card-body px-4 pt-0 pb-2">
                     <div class="row">
@@ -80,7 +80,6 @@
                 <div class="col-md-6">
                     <h6>Supplier</h6>
                     <div class="card-wrapper">
-                        <input type="hidden" name="data_id" value="" id="data_id">
                         <div class="form-group row">
                             <label for="example-text-input" class="col-md-4 col-form-label form-control-label">Invoice Code</label>
                             <div class="col-md-7">
@@ -285,17 +284,18 @@
                         var total = product.quantity * product.selling_price;
                         sub_total += total;
                         product_id.push(product.id);
-                        var newRow = '<tr>' +
+                        var dataIdString = product_id.join(',');
+
+                        var newRow = '<tr><input type="hidden" name="data_id[]" value="'+ product.id +'" id="data_id">' +
                             '<td>' + product.id + '</td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="quantity" value="' + product.quantity + '"></td>' +
+                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" name="sale_quantity[]" value="' + product.quantity + '"></td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="selling_price" value="' + product.selling_price + '"></td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
                             '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
                             '</tr>';
                         $('input[name="sub_total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
-                        $('input[name="data_id"]').val(product_id);
                         $('#manageSaleTable tbody').append(newRow);
 
                     });
@@ -305,30 +305,7 @@
 
     });
 
-    $(document).on('input', '#manageSaleTable input', function() {
-        var $input = $(this);
-        var productId = $input.closest('tr').find('td:first').text(); // Get the product ID from the first column of the current row
-        var field = $input.data('field');
-        var value = $input.val();
-
-        $.ajax({
-            url: '/update-product-data/'
-            , type: 'POST'
-            , data: {
-                productId: productId
-                , field: field
-                , value: value
-            }
-            , success: function(response) {
-                // Handle success response
-                console.log(response);
-            }
-            , error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        });
-    });
+    
     $(document).on('input', '#manageSaleTable input', function() {
         var $input = $(this);
         var productId = $input.closest('tr').find('td:first').text(); // Get the product ID from the first column of the current row
@@ -346,7 +323,7 @@
             , success: function(response) {
                 updateGrandTotal();
                 // Handle success response
-                if (field === 'quantity' || field === 'selling_price') {
+                if (field === 'sale_quantity' || field === 'selling_price') {
                     updateTotal(productId);
                     updateSubTotal();
                 }
@@ -360,7 +337,7 @@
 
     function updateTotal(productId) {
         // Calculate total based on quantity and unit_price
-        var quantity = parseFloat($('input[data-id="' + productId + '"][data-field="quantity"]').val());
+        var quantity = parseFloat($('input[data-id="' + productId + '"][data-field="sale_quantity"]').val());
         var unitPrice = parseFloat($('input[data-id="' + productId + '"][data-field="selling_price"]').val());
         var total = isNaN(quantity) || isNaN(unitPrice) ? 0 : quantity * unitPrice;
 
@@ -449,17 +426,18 @@
                             var total = product.quantity * product.selling_price;
                             sub_total += total;
                             product_id.push(product.id);
-                            var newRow = '<tr>' +
+                            var dataIdString = product_id.join(',');
+                            var newRow = '<tr><input type="hidden" name="data_id[]" value="'+ product.id +'" id="data_id">' +
                                 '<td>' + product.id + '</td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="quantity" value="' + product.quantity + '"></td>' +
+                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" name="sale_quantity[]" value="' + product.quantity + '"></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="selling_price" value="' + product.selling_price + '"></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
                                 '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
                                 '</tr>';
                             $('input[name="sub_total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
-                            $('input[name="data_id"]').val(product_id);
+                            $('input[name="data_id"]').val(dataIdString);
                             $('#manageSaleTable tbody').append(newRow);
                         });
                     }

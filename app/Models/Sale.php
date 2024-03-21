@@ -22,4 +22,9 @@ class Sale extends Model
     {
         return $this->belongsTo(Customer::class, 'customer', 'id');
     }
+
+    public function products()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }

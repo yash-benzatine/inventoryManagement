@@ -8,6 +8,8 @@ use App\Models\Category;
 use DataTables;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
@@ -34,13 +36,12 @@ class CategoryController extends Controller
     {
       try {
         // Validate the incoming request data
-        $request->validate([
+        $validatedData = Validator::make($request->all() ,[
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|string', // You might adjust this validation rule as needed
             'cat_id' => [
                 'required_if:cat_id,0',
-                'required',
                 'integer',
             ]
             ],[
@@ -58,6 +59,7 @@ class CategoryController extends Controller
             $route = 'sub-category.index';
             $message = 'Sub category created successfully.';
         }else{
+            $category->cat_id = 0;
             $route = 'category.index';
             $message = 'Category created successfully.';
         }
@@ -76,7 +78,7 @@ class CategoryController extends Controller
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             // Handle other exceptions
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with(['message'=> $e->getMessage(), 'alert-type' => 'warning']);
         }
     }
 
@@ -102,32 +104,40 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|string', // You might adjust this validation rule as needed
-            'cat_id' => [
-                'required_if:cat_id,0',
-                'required',
-                'integer',
-            ],
-        ]);
+        try {
+            $validatedData = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'status' => 'required|string', // You might adjust this validation rule as needed
+                'cat_id' => [
+                    'required_if:cat_id,0',
+                    'required',
+                    'integer',
+                ],
+            ]);
 
-        $category->name = $request->input('name');
-        $category->description = $request->input('description');
-        $category->status = $request->input('status');
-        if($request->has('cat_id')){
-            $category->cat_id = $request->input('cat_id');
-            $route = 'sub-category.index';
-            $message = 'Sub category created successfully.';
-        }else{
-            $route = 'category.index';
-            $message = 'Category created successfully.';
-        }
-        if($category->save()) {
-            return redirect()->route($route)->with(['message' => $message, 'alert-type' => 'success']);
-        }else{
-            return redirect()->back()->with(['message' => 'Data not updated successfully.', 'alert-type' => 'error']);
+            $category->name = $request->input('name');
+            $category->description = $request->input('description');
+            $category->status = $request->input('status');
+            if($request->has('cat_id')){
+                $category->cat_id = $request->input('cat_id');
+                $route = 'sub-category.index';
+                $message = 'Sub category updated successfully.';
+            }else{
+                $route = 'category.index';
+                $message = 'Category updated successfully.';
+            }
+            if($category->save()) {
+                return redirect()->route($route)->with(['message' => $message, 'alert-type' => 'success']);
+            }else{
+                return redirect()->back()->with(['message' => 'Data not updated successfully.', 'alert-type' => 'error']);
+            }
+            } catch (ValidationException $e) {
+            // Handle validation errors
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return redirect()->back()->with(['message'=> $e->getMessage(), 'alert-type' => 'warning']);
         }
     }
 
@@ -152,11 +162,11 @@ class CategoryController extends Controller
                 return '<span class="badge badge-pill badge-sm badge-' . $badgeColor . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('category.edit',['category' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('category.edit',['category' => $row->id]). '" class="btn btn-primary btn-icon-only mx-2" title="Edit Category"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('category.destroy', ['category' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('category.destroy', ['category' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('category.destroy', ['category' => $row]) .'" class="btn btn-danger btn-icon-only" title="Delete Category"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></a>
                                         </form></div>';
                 return $actionBtn;
             })

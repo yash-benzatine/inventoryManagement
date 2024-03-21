@@ -3,10 +3,12 @@
 @section('content')
 <div class="row mt-4 mx-4">
     <div class="col-12">
+        <form action="{{ route('manage-purchase.store') }}" method="POST" id="purchaseForm">
+
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
                 <h5>Manage Purchase</h5>
-                <a href="{{ route('manage-purchase.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Manage Purchase</a>
+                <a href="{{ route('manage-purchase.create') }}" class="btn btn-dark">Add Manage Purchase</a>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 <div class="col-md-4 mb-4">
@@ -23,17 +25,11 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Serial
-                                </th>
-                                <th>
-                                    Name
-                                </th>
-                                <th>
-                                    Quantity</th>
-                                <th>
-                                    Unit Price</th>
-                                <th>
-                                    Total</th>
+                                <th>Serial</th>
+                                <th>Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,13 +48,11 @@
 
             </div>
         </div>
-        <form action="{{ route('manage-purchase.store') }}" method="POST" id="purchaseForm">
             @csrf
             <div class="row">
                 <div class="col-md-6">
                     <h6>Supplier</h6>
-                    <div class="card-wrapper">
-                        <input type="hidden" name="data_id" value="" id="data_id">
+                    <div class="card-wrapper"> 
                         <div class="form-group row">
                             <label for="example-text-input" class="col-md-4 col-form-label form-control-label">Purchase Code</label>
                             <div class="col-md-7">
@@ -119,7 +113,7 @@
                         <div class="form-group row">
                             <label for="example-text-input" class="col-md-4 col-form-label form-control-label">Due</label>
                             <div class="col-md-7">
-                                <input class="form-control @error('due') is-invalid @enderror" name="due" type="number" value="{{ old('due') }}" id="due" readonly="">
+                                <input class="form-control @error('due') is-invalid @enderror" name="due" type="text" value="{{ old('due') }}" id="due" readonly="">
 
                                 @error('due')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -147,7 +141,6 @@
                 </div>
             </div>
         </form>
-
     </div>
 </div>
 @endsection
@@ -207,13 +200,6 @@
         $('#managePurchaseTable').DataTable();
     });
 
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': '{{csrf_token()}}'
-        }
-    });
-
     $('#productId').change(function(e) {
         e.preventDefault();
         var productId = $(this).val();
@@ -234,23 +220,22 @@
                             $('.tr-wrapper').closest('tr').remove();
                             var total = product.quantity * product.purchase_price;
                             sub_total += total;
-                            alert();
                             product_id.push(product.id);
-                            var newRow = '<tr>' +
+                            var newRow = '<tr><input type="hidden" name="data_id[]" value="'+ product.id +'" id="data_id">' +
                                 '<td>' + product.id + '</td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="quantity" value="' + product.quantity + '"></td>' +
+                                '<td><input type="text" class="form-control purchase_quantity"  id="'+ product.id +'"  name="purchase_quantity[]" value="' + product.quantity + '"></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="purchase_price" value="' + product.purchase_price + '"></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
                                 '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
                                 '</tr>';
                             $('input[id="total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
-                            $('input[name="data_id"]').val(product_id);
                             $('#managePurchaseTable tbody').append(newRow);
+                            updateGrandTotal();
                         });
                     } else {
-                        $('#managePurchaseTable tbody').append('<tr> <td colspan = "6" > No data found< /td>< /tr > ');
+                        $('#managePurchaseTable tbody').append('<tr> <td colspan = "6"> No data found< /td></tr> ');
                     }
                 }
             });
@@ -258,31 +243,7 @@
             $('#managePurchaseTable tbody').empty();
         }
     });
-
-    $(document).on('input', '#managePurchaseTable input', function() {
-        var $input = $(this);
-        var productId = $input.closest('tr').find('td:first').text(); // Get the product ID from the first column of the current row
-        var field = $input.data('field');
-        var value = $input.val();
-
-        $.ajax({
-            url: '/update-product-data/'
-            , type: 'POST'
-            , data: {
-                productId: productId
-                , field: field
-                , value: value
-            }
-            , success: function(response) {
-                // Handle success response
-                console.log(response);
-            }
-            , error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        });
-    });
+  
     $(document).on('input', '#managePurchaseTable input', function() {
         var $input = $(this);
         var productId = $input.closest('tr').find('td:first').text(); // Get the product ID from the first column of the current row
@@ -300,7 +261,7 @@
             , success: function(response) {
                 updateGrandTotal();
                 // Handle success response
-                if (field === 'quantity' || field === 'purchase_price') {
+                if (field === 'purchase_quantity' || field === 'purchase_price') {
                     updateTotal(productId);
                     updateGrandTotal();
                 }
@@ -312,11 +273,19 @@
         });
     });
 
+    $('.purchase_quantity').on('click', function() {
+        var productId = this.id;
+        alert(productId);
+        updateTotal(productId);
+    });
+
     function updateTotal(productId) {
         // Calculate total based on quantity and unit_price
-        var quantity = parseFloat($('input[data-id="' + productId + '"][data-field="quantity"]').val());
+        var quantity = parseFloat($('input[data-id="' + productId + '"][data-field="purchase_quantity"]').val());
         var unitPrice = parseFloat($('input[data-id="' + productId + '"][data-field="purchase_price"]').val());
         var total = isNaN(quantity) || isNaN(unitPrice) ? 0 : quantity * unitPrice;
+        alert(total);
+        alert(quantity);
 
         // Update total column in the table
         $('input[data-id="' + productId + '"][data-field="total"]').val(total);
@@ -340,10 +309,9 @@
     });
     // Function to update the due amount
     function updateDue() {
-        var grandTotal = parseFloat($('#grand_total').val()) || 0;
-        var amountPaid = parseFloat($('#amount').val()) || 0;
-        var due = grandTotal - amountPaid;
-        $('#due').val(due.toFixed(2));
+        var grandTotal = parseFloat($('#total').val()) || 0;
+        var amountDue = grandTotal - parseFloat($('#amount').val()) || 0;
+        $('#due').val(amountDue.toFixed(2));
     }
 
 </script>

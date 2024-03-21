@@ -6,7 +6,7 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
                 <h5>Sales</h5>
-                <a href="{{ route('manage-sale.index') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Sale</a>
+                <a href="{{ route('manage-sale.index') }}" class="btn btn-dark">Add Sale</a>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 <div class="table-responsive p-0">

@@ -117,6 +117,8 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
     Route::post('sale-report', [SaleController::class, 'report'])->name('sale.report');
     Route::get('purchase-index-report', [PurchaseController::class, 'reportIndex'])->name('purchaseReport.index');
     Route::post('purchase-report', [PurchaseController::class, 'report'])->name('purchase.report');
+    Route::get('purchase-show/{purchaseId}', [PurchaseController::class, 'invoice'])->name('purchase.show');
+    Route::get('sale-show/{saleId}', [SaleController::class, 'invoice'])->name('sale.show');
 
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });

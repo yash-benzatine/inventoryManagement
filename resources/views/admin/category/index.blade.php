@@ -6,7 +6,7 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
                 <h5>Category</h5>
-                <a href="{{ route('category.create') }}" class="btn bg-gradient-dark btn-sm float-end mb-0">Add Category</a>
+                <a href="{{ route('category.create') }}" class="btn btn-dark">Add Category</a>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 <div class="table-responsive p-0">

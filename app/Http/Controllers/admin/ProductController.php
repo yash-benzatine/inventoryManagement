@@ -8,6 +8,9 @@ use App\Models\Product;
 use DataTables;
 use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\Sale;
+use DB;
+
 
 class ProductController extends Controller
 {
@@ -57,7 +60,7 @@ class ProductController extends Controller
         }
 
         $product->save();
-        return redirect()->route('product.index')->with(['success'=> 'Product added successfully.', 'alert-type' => 'success']);
+        return redirect()->route('product.index')->with(['message'=> 'Product added successfully.', 'alert-type' => 'success']);
     }
 
     /**
@@ -110,7 +113,7 @@ class ProductController extends Controller
         }
 
         $product->save();
-        return redirect()->route('product.index')->with(['success'=> 'Product updated successfully.', 'alert-type' => 'success']);
+        return redirect()->route('product.index')->with(['message'=> 'Product updated successfully.', 'alert-type' => 'success']);
     }
 
     /**
@@ -136,6 +139,20 @@ class ProductController extends Controller
             ->addColumn('category_id', function ($row) {
                 return $row->category->name;
             })
+            ->addColumn('inventory', function ($row) {
+                if($row->quantity != NULL){
+                    $inventory = $row->quantity;
+                }else{
+
+                    $totalQuantity = $row->quantity ?? 0;
+                    // Get total quantity sold for the product
+                    $totalSalesQuantity = DB::table('sales')->whereRaw("find_in_set($row->id,'product_id')")->sum('quantity');
+
+                    // Calculate inventory (total quantity - total sales quantity)
+                    $inventory = $totalQuantity - $totalSalesQuantity;
+                }
+                return $inventory;
+            })
             ->addColumn('image', function ($row) {
                 if($row->image != ''){
                     return '<img src="'. asset('admin/products/'. $row->image) .'" height="90" width="90" class="shadow-sm">';
@@ -144,15 +161,15 @@ class ProductController extends Controller
                 }
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('product.edit',['product' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
+                $actionBtn = '<div class="d-flex align-items-center"><a href="' . route('product.edit',['product' => $row->id]). '" class="btn btn-primary btn-icon-only mx-2" title="Edit Product"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('product.destroy', ['product' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'
-                                        <a href="'. route('product.destroy', ['product' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
+                                        <a href="'. route('product.destroy', ['product' => $row]) .'" class="btn btn-danger btn-icon-only" title="Delete Product"><span class="btn-inner--icon"><i class="fab fa fa-trash"></i></a>
                                         </form></div>';
                 return $actionBtn;
             })
-            ->rawColumns(['action', 'status','image','category_id'])
+            ->rawColumns(['action', 'status','image','category_id', 'inventory'])
             ->make(true);
     }
 }

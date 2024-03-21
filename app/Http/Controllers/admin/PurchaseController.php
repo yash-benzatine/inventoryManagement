@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use App\Models\PurchaseHistory;
 
 
 class PurchaseController extends Controller
@@ -48,16 +49,22 @@ class PurchaseController extends Controller
 
         $purchase = new Purchase();
         $purchase->purchase_code = $request->input('purchase_code');
-        $purchase->product_id = $request->input('data_id');
         $purchase->supplier_id = $request->input('supplier_id');
         $purchase->date = $request->input('date');
         $purchase->total = $request->input('total');
         $purchase->amount = $request->input('amount');
         $purchase->due = $request->input('due');
         $purchase->payment_type = $request->input('paymentType');
-
-        // Save the purchase
         $purchase->save();
+        if($purchase->save()){
+            foreach ($request->input('data_id') as $key => $productId) {
+                $purchaseHistory = new PurchaseHistory();
+                $purchaseHistory->purchase_id = $purchase->id; // Set the product ID
+                $purchaseHistory->product_id = $productId;
+                $purchaseHistory->quantity = $request->input('purchase_quantity')[$key]; // Set the purchase quantity for this product
+                $purchaseHistory->save();
+            }
+        }
 
         // Redirect back or return a response
         return redirect()->back()->with(['message'=> 'Purchase created successfully', 'alert-type' => 'success']);
@@ -89,20 +96,22 @@ class PurchaseController extends Controller
 
     public function getData(Request $request)
     {
-        $data = Purchase::with(['Supplier'])->orderBy('id', 'DESC');
+        $data = Sale::with(['Customer'])->orderBy('id', 'DESC');
+
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('supplier_id', function ($row) {
                 return $row->Supplier->name;
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('product.edit',['product' => $row->id]). '" class=""><p class="text-sm font-weight-bold mb-0">Edit</p></a>
-                <form action="'. route('product.destroy', ['product' => $row]) .'" method="POST">
-                                            '.csrf_field().'
-                                            '.method_field('DELETE').'
-                                        <a href="'. route('product.destroy', ['product' => $row]) .'"><p class="text-sm font-weight-bold mb-0 ps-2">Delete</p></a>
-                                        </form></div>';
-                return $actionBtn;
+                $actionBtn = '<div class="d-flex align-items-center"><a href="' . route('purchase.show', $row->purchase_code). '" class="btn btn-primary mx-2" title="View Purchase Detail"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
+                
+                if($row->due != 0){
+                    $action = '<a href="'. route('product.destroy', ['product' => $row]) .'" class="btn btn-info" title="Delete Purchase"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
+                }else{
+                    $action = '<a href="#" class="btn btn-success" title="Delete Purchase"><span class="btn-inner--icon"><i class="fab fa fa-money mx-2"></i>Paid</a></div>';
+                }
+                return $actionBtn. $action;
             })
             ->rawColumns(['action', 'supplier_id'])
             ->make(true);
@@ -115,15 +124,17 @@ class PurchaseController extends Controller
 
     public function updateProducts(Request $request){
         $productId = $request->input('productId');
-        $quantity = $request->input('quantity');
-        $field = $request->field;
-        $value = $request->value;
-        // Update the database table here
-        $product = Product::findOrFail($productId);
-        $product[$field] = $value;
-        $product->save();
-
-        return response()->json(['success' => true]);
+        if($request->quantity){
+        //  return response()->json(['success' => true]);
+        }else{
+            $field = $request->field;
+            $value = $request->value;
+            // Update the database table here
+            $product = Product::findOrFail($productId);
+            $product[$field] = $value;
+            $product->save();
+            return response()->json(['success' => true]);
+        }
     }
 
     public function reportIndex(){
@@ -152,5 +163,11 @@ class PurchaseController extends Controller
             })
             ->rawColumns(['supplier_id'])
             ->make(true);
+    }
+
+    public function invoice($purchaseId){
+        $purchases = PurchaseHistory::with(['Product'])->where('purchase_id', $purchaseId)->get();
+        $purchase1 = Purchase::with(['Supplier'])->where('id', $purchaseId)->first();
+        return view('admin.purchase.invoice', compact('purchases', 'purchase1'));
     }
 }
