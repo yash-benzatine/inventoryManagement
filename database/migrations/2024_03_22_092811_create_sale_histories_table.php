@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('sale_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->string('invoice_code');
+            $table->unsignedBigInteger('invoice_code');
+            $table->foreign('invoice_code')->references('id')->on('sales')->onDelete('cascade');        
+            $table->string('product_id');
             $table->integer('quantity');
             $table->timestamps();
             $table->softDeletes();

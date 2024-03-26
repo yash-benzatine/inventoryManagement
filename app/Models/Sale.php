@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Customer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Relations\hasMany;
+use App\Models\SaleHistory;
 
 class Sale extends Model
 {
@@ -26,5 +27,10 @@ class Sale extends Model
     public function products()
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function SaleHistory() : hasMany
+    {
+        return $this->hasMany(SaleHistory::class, 'invoice_code', 'invoice_code');
     }
 }

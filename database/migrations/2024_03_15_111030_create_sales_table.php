@@ -17,12 +17,12 @@ return new class extends Migration
             $table->string('product_id');
             $table->string('customer');
             $table->date('date');
-            $table->decimal('sub_total', 10, 2);
-            $table->decimal('discount', 10, 2)->nullable();
-            $table->decimal('vat', 10, 2)->nullable();
-            $table->decimal('grand_total', 10, 2);
-            $table->decimal('received_amount', 10, 2);
-            $table->decimal('due', 10, 2);
+            $table->integer('sub_total', 10, 2);
+            $table->integer('discount', 10, 2)->nullable();
+            $table->integer('vat', 10, 2)->nullable();
+            $table->integer('grand_total', 10, 2);
+            $table->integer('received_amount', 10, 2);
+            $table->integer('due', 10, 2);
             $table->string('payment_type');
             $table->timestamps();
             $table->softDeletes();

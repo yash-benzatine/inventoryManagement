@@ -27,7 +27,7 @@
                         </div>
                         <div>Phone: {{ $sale1->Customer->phone}}</div>
                         <div>Email: {{ $sale1->Customer->email }}</div>
-                        <div>Currency: DH</div>
+                        <!-- <div>Currency: DH</div> -->
                      </div>
                   </div>
                </div>
@@ -49,7 +49,7 @@
                         ?> 
                         @foreach($sale as $sale2)
                         <?php 
-                            $product = \App\Models\PurchaseHistory::where('purchase_id', $sale2->id)->get();
+                            $product = \App\Models\SaleHistory::where('invoice_code', $sale2->invoice_code)->get();
                             $total =  $sale2->quantity * $sale2->Product->selling_price;
                             $subTotal += $total;
                         ?>
@@ -76,7 +76,7 @@
                               </tr>
                               <tr>
                                  <td class="left"><strong>Total Paid</strong></td>
-                                 <td class="right">{{ $subTotal - $sale1->due }}</td>
+                                 <td class="right">{{ $sale1->received_amount }}</td>
                               </tr>
                               <tr>
                                  <td class="left"><strong>Payment Due</strong></td>

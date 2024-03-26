@@ -59,7 +59,7 @@ class PurchaseController extends Controller
         if($purchase->save()){
             foreach ($request->input('data_id') as $key => $productId) {
                 $purchaseHistory = new PurchaseHistory();
-                $purchaseHistory->purchase_id = $purchase->id; // Set the product ID
+                $purchaseHistory->purchase_code = $purchase->purchase_code; // Set the product ID
                 $purchaseHistory->product_id = $productId;
                 $purchaseHistory->quantity = $request->input('purchase_quantity')[$key]; // Set the purchase quantity for this product
                 $purchaseHistory->save();
@@ -96,7 +96,9 @@ class PurchaseController extends Controller
 
     public function getData(Request $request)
     {
-        $data = Sale::with(['Customer'])->orderBy('id', 'DESC');
+        $data = Purchase::with(['Supplier' => function($query) {
+        $query->withTrashed(); // Filter out soft-deleted suppliers
+    }])->orderBy('id', 'DESC')->get(); // Filter out soft-deleted purchases
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -107,9 +109,9 @@ class PurchaseController extends Controller
                 $actionBtn = '<div class="d-flex align-items-center"><a href="' . route('purchase.show', $row->purchase_code). '" class="btn btn-primary mx-2" title="View Purchase Detail"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
                 
                 if($row->due != 0){
-                    $action = '<a href="'. route('product.destroy', ['product' => $row]) .'" class="btn btn-info" title="Delete Purchase"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
+                    $action = '<a href="'. route('purchase.due', $row->purchase_code) .'" class="btn btn-info" title="Purchase Due Detail"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
                 }else{
-                    $action = '<a href="#" class="btn btn-success" title="Delete Purchase"><span class="btn-inner--icon"><i class="fab fa fa-money mx-2"></i>Paid</a></div>';
+                    $action = '<a href="#" class="btn btn-success" title="Purchase Paid"><span class="btn-inner--icon"><i class="fab fa fa-money mx-2"></i>Paid</a></div>';
                 }
                 return $actionBtn. $action;
             })
@@ -166,8 +168,57 @@ class PurchaseController extends Controller
     }
 
     public function invoice($purchaseId){
-        $purchases = PurchaseHistory::with(['Product'])->where('purchase_id', $purchaseId)->get();
-        $purchase1 = Purchase::with(['Supplier'])->where('id', $purchaseId)->first();
+        $purchases = PurchaseHistory::with(['Product' => function($query){
+           $query->withTrashed(); // Include soft-deleted suppliers 
+        }])->where('purchase_code', $purchaseId)->get();
+        $purchase1 = Purchase::with(['Supplier' => function ($query) {
+            $query->withTrashed(); // Include soft-deleted suppliers
+        }])->withTrashed()->where('purchase_code', $purchaseId)->first();
         return view('admin.purchase.invoice', compact('purchases', 'purchase1'));
+    }
+
+    public function dueDetail($purchaseId){
+        $purchase = Purchase::with(['PurchaseHistory','Supplier' => function($query){
+            $query->withTrashed();
+        }])->where('purchase_code', $purchaseId)->first();
+        $purchase->load(['PurchaseHistory.Product' => function($query) {
+            $query->withTrashed();
+        }]);
+        return view('admin.purchase.due', compact('purchase'));
+    }
+
+    public function update(Request $request, $purchaseId){
+        try {
+        // Validate the incoming request data
+        $validatedData = Validator::make($request->all(), [
+            'date' => 'required|date',
+            'amount' => 'required|numeric',
+            'paymentType' => 'required|string',
+        ]);
+
+        // if ($validatedData->fails()) {
+        //     return redirect()->back()->withErrors($validatedData)->withInput();
+        // }
+
+        $purchase = Purchase::where('purchase_code', $purchaseId)->first();
+        $amount = $purchase->amount;
+        $total = $amount + $request->input('amount');
+        $subtotal = $purchase->total - $total;
+
+        $purchase->date = $request->input('date');
+        $purchase->amount =  $total;
+        $purchase->due = $subtotal;
+        $purchase->payment_type = $request->input('paymentType');
+        $purchase->save();
+            
+        // Redirect back or return a response
+        return redirect()->route('purchase.show', $purchase->purchase_code)->with(['message'=> 'Purchase updated successfully', 'alert-type' => 'success']);
+        } catch (\ValidationException $e) {
+            // Handle validation errors
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return redirect()->back()->with(['message'=> $e->getMessage(), 'alert-type' => 'warning']);
+        }
     }
 }

@@ -75,7 +75,7 @@ class SaleController extends Controller
         if($sale->save()){
             foreach ($request->input('data_id') as $key => $productId) {
                 $saleHistory = new SaleHistory();
-                $saleHistory->sale_id = $sale->id; // Set the product ID
+                $saleHistory->invoice_code = $sale->invoice_code; // Set the product ID
                 $saleHistory->product_id = $productId;
                 $saleHistory->quantity = $request->input('sale_quantity')[$key]; // Set the purchase quantity for this product
                 $saleHistory->save();
@@ -106,34 +106,39 @@ class SaleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sale $sale)
+    public function update(Request $request, $saleId)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|string', // You might adjust this validation rule as needed
-            'cat_id' => [
-                'required_if:cat_id,0',
-                'required',
-                'integer',
-            ],
+        try {
+        // Validate the incoming request data
+        $validatedData = Validator::make($request->all(), [
+            'date' => 'required|date',
+            'received_amount' => 'required|numeric',
+            'paymentType' => 'required|string',
         ]);
 
-        $category->name = $request->input('name');
-        $category->description = $request->input('description');
-        $category->status = $request->input('status');
-        if($request->has('cat_id')){
-            $category->cat_id = $request->input('cat_id');
-            $route = 'sub-category.index';
-            $message = 'Sub category created successfully.';
-        }else{
-            $route = 'category.index';
-            $message = 'Category created successfully.';
-        }
-        if($category->save()) {
-            return redirect()->route($route)->with(['message' => $message, 'alert-type' => 'success']);
-        }else{
-            return redirect()->back()->with(['message' => 'Data not updated successfully.', 'alert-type' => 'error']);
+        // if ($validatedData->fails()) {
+        //     return redirect()->back()->withErrors($validatedData)->withInput();
+        // }
+
+        $sale = Sale::where('invoice_code', $saleId)->first();
+        $amount = $sale->received_amount;
+        $total = $amount + $request->input('received_amount');
+        $subtotal = $sale->grand_total - $total;
+
+        $sale->date = $request->input('date');
+        $sale->received_amount =  $total;
+        $sale->due = $subtotal;
+        $sale->payment_type = $request->input('paymentType');
+        $sale->save();
+            
+        // Redirect back or return a response
+        return redirect()->route('sale.show', $sale->invoice_code)->with(['message'=> 'sale updated successfully', 'alert-type' => 'success']);
+        } catch (\ValidationException $e) {
+            // Handle validation errors
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Exception $e) {
+            // Handle other exceptions
+            return redirect()->back()->with(['message'=> $e->getMessage(), 'alert-type' => 'warning']);
         }
     }
 
@@ -155,7 +160,9 @@ class SaleController extends Controller
 
     public function getData(Request $request)
     {
-        $data = Sale::with('Customer')->orderBy('id', 'DESC')->get();
+        $data = Sale::with(['Customer' => function($query){
+            $query->withTrashed();
+        }])->orderBy('id', 'DESC')->get();
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -163,10 +170,10 @@ class SaleController extends Controller
                 return $row->Customer->name;
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('sale.show', $row->id). '" class="btn btn-primary mx-2" title="Sale Detail View"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
+                $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="' . route('sale.show', $row->invoice_code). '" class="btn btn-primary mx-2" title="Sale Detail View"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
 
                 if($row->due != 0){
-                    $action = '<a href="'. route('product.destroy', ['product' => $row]) .'" class="btn btn-info" title="Due Sale"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
+                    $action = '<a href="'. route('sale.due',  $row->invoice_code) .'" class="btn btn-info" title="Due Sale"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
                 }else{
                     $action = '<a href="#" class="btn btn-success" title="Paid Sale"><span class="btn-inner--icon"><i class="fab fa fa-money mx-2"></i>Paid</a></div>';
                 }
@@ -178,21 +185,25 @@ class SaleController extends Controller
     public function getData1(Request $request)
     {
         // $data = Product::where(['id'=>$request->productId])->get();
-        $data = Product::
-            when($request->filled('productId'), function ($query) use ($request) {
+        $data = Product::with(['SubCategory'])
+            ->when($request->filled('productId'), function ($query) use ($request) {
                 return $query->where('id', $request->productId);
             })
             ->when($request->filled('subCategoryId'), function ($query) use ($request) {
                 return $query->where('sub_category_id', $request->subCategoryId);
             })
+            ->when($request->filled('categoryId'), function ($query) use ($request) {
+                return $query->where('category_id', $request->categoryId);
+            })
             ->orderBy('id', 'DESC')
             ->get();
-        return response()->json(['product'=>$data, 'status'=>1]);
+        $subCategory = Category::where(['cat_id'=>$request->categoryId , 'status'=>1])->get();    
+        return response()->json(['product'=>$data, 'status'=>1, 'subCategory'=> $subCategory]);
     }
 
     public function updateProducts(Request $request){
         $productId = $request->input('productId');
-        if($request->has('quantity')){
+        if($request->field == 'sale_quantity'){
             return response()->json(['success' => true]);
         }else{
             $field = $request->field;
@@ -210,7 +221,9 @@ class SaleController extends Controller
     }
 
     public function report(Request $request){
-        $data = Sale::with('Customer');
+        $data = Sale::with(['Customer' => function($query){
+            $query->withTrashed();
+        }]);
          if ($request->filled('from') && $request->filled('to')) {
             $fromDate = Carbon::parse($request->from)->startOfDay(); // Parse and set time to start of day
             $toDate = Carbon::parse($request->to)->endOfDay(); // Parse and set time to end of day
@@ -230,8 +243,20 @@ class SaleController extends Controller
     }
 
     public function invoice($saleId){
-        $sale =  SaleHistory::with(['Product'])->where('sale_id', $saleId)->get();
-        $sale1 = Sale::with(['Customer'])->where('id', $saleId)->first();
+        $sale =  SaleHistory::with(['Product'=> function($query){
+            $query->withTrashed();
+        }])->where('invoice_code', $saleId)->get();
+        $sale1 = Sale::with(['Customer' => function($query){
+            $query->withTrashed();
+        }])->where('invoice_code', $saleId)->first();
         return view('admin.manage-sales.invoice', compact('sale', 'sale1'));
+    }
+
+    public function dueDetail($saleId){
+        $sale = Sale::with(['SaleHistory'])->where(['invoice_code'=> $saleId])->first();
+        $sale->load(['SaleHistory.Product' => function($query) {
+            $query->withTrashed();
+        }]);
+        return view('admin.manage-sales.due', compact('sale'));
     }
 }

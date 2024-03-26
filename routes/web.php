@@ -99,7 +99,7 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 
     //manage-sale
     Route::resource('manage-sale', SaleController::class);
-    Route::post('/manage-sale-get-data', [SaleController::class, 'getData'])->name('manage-sale.get-data');
+    Route::post('/manage-sale-get-data', [SaleController::class, 'getData1'])->name('manage-sale.get-data');
     Route::get('/manage-sale/destroy/{product}', [SaleController::class, 'destroy'])->name('manage-sale.delete');
     Route::post('/update-product-data', [SaleController::class, 'updateProducts']);
     Route::get('/sale', [SaleController::class, 'index2'])->name('sale.index');
@@ -119,6 +119,9 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
     Route::post('purchase-report', [PurchaseController::class, 'report'])->name('purchase.report');
     Route::get('purchase-show/{purchaseId}', [PurchaseController::class, 'invoice'])->name('purchase.show');
     Route::get('sale-show/{saleId}', [SaleController::class, 'invoice'])->name('sale.show');
+
+    Route::get('purchase-due/{purchaseId}', [PurchaseController::class, 'dueDetail'])->name('purchase.due');
+    Route::get('sale-due/{saleId}', [SaleController::class, 'dueDetail'])->name('sale.due');
 
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });

@@ -95,7 +95,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
-                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                            <i class="ni fa fa-user text-lg opacity-10" aria-hidden="true"></i>
                         </div>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                         <div class="numbers">
                             <p class="text-sm mb-0 text-uppercase font-weight-bold">Sales</p>
                             <h5 class="font-weight-bolder">
-                                {{ $salePercentage }}
+                                {{ $sale }}
                             </h5>
                             <p class="mb-0">
                                 <span class="{{ $salePercentage >= 1 ? 'text-success' : 'text-danger'}} text-sm font-weight-bolder">{{ $salePercentage }}%</span>
@@ -188,7 +188,7 @@
                         <div class="numbers">
                             <p class="text-sm mb-0 text-uppercase font-weight-bold">Purchase</p>
                             <h5 class="font-weight-bolder">
-                                {{ $purchasePercentage }}
+                                {{ $purchase }}
                             </h5>
                             <p class="mb-0">
                                 <span class="{{ $purchasePercentage >= 1 ? 'text-success' : 'text-danger'}} text-sm font-weight-bolder">{{ $purchasePercentage }}%</span> than last month
@@ -233,14 +233,20 @@
             <div class="card-body p-3">
                 <ul class="list-group">
                     @foreach ($products as $product)
+                        <?php
+                            $salesHistory = \App\Models\SaleHistory::where('product_id', $product->product_id)->sum('quantity');
+                            $stock = $product->Product->quantity - $salesHistory;
+                        
+                        ?>
                     <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
                         <div class="d-flex align-items-center">
                             <div class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">
                                 <i class="ni ni-mobile-button text-white opacity-10"></i>
                             </div>
                             <div class="d-flex flex-column">
-                                <h6 class="mb-1 text-dark text-sm">{{ $product->name }}</h6>
-
+                                <h6 class="mb-1 text-dark text-sm">{{ $product->Product->name }}</h6>
+                                <span class="text-xs">{{ $stock }} in stock, <span class="font-weight-bold">{{ $salesHistory }}+
+                                sold</span></span>
                             </div>
                         </div>
                         <div class="d-flex">

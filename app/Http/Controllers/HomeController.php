@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Models\Customer;
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\SaleHistory;
 
 class HomeController extends Controller
 {
@@ -59,71 +60,82 @@ class HomeController extends Controller
         $customerPercentage = $this->customerPercentage($customer);
 
         $currentMonth = Carbon::now()->month;
-        $sale = Sale::where('created_at', '>=', $currentMonth)->count();
+        $sale = Sale::sum('grand_total');
         $salePercentage = $this->salePercentage();
 
-        $purchase = Purchase::where('created_at', '>=', $currentMonth)->count();
+        $purchase = Purchase::sum('total');
         $purchasePercentage = $this->purchasePercentage();
 
         $product = Product::where(['status'=> 1])->count();
         $products = Product::where('status', 1)->latest()->limit(5)->get();
+        $products = SaleHistory::select('product_id', \DB::raw('SUM(quantity) as total_sales'))
+        ->with(['Product'])
+        ->groupBy('product_id')
+        ->orderByDesc('total_sales')
+        ->take(5)
+        ->get();
+
         $productPercentage = $this->productPercentage();
-        $payment = Sale::sum('received_amount');
+        $payment = Purchase::sum('amount');
 
         $salePaymentPercentage = $this->salePaymentPercentage();
 
         $saleData = Sale::whereYear('created_at', Carbon::now()->year)
                         ->orderBy('created_at')
-                        ->pluck('received_amount')
+                        ->pluck('grand_total')
                         ->toArray();
 
         // Fetch purchase data for each month
         $purchaseData = Purchase::whereYear('created_at', Carbon::now()->year)
                                 ->orderBy('created_at')
-                                ->pluck('amount')
+                                ->pluck('total')
                                 ->toArray();
 
         // Months
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
         $currentYear = Carbon::now()->year;
-        $previousYear = $currentYear - 1;
+        $startOfLastYear = Carbon::now()->subYear()->startOfYear();
+        $endOfLastYear = Carbon::now()->subYear()->endOfYear();
+
+        $startOfCurrentYear = Carbon::now()->startOfYear();
+        $endOfCurrentYear = Carbon::now()->endOfYear();
 
         // Fetch sales data count for the current year
-        $currentYearSalesCount = Sale::whereYear('created_at', $currentYear)->count();
+        $currentYearSalesCount = Sale::whereBetween('created_at', [$startOfCurrentYear, $endOfCurrentYear])->sum('grand_total');
 
         // Fetch sales data count for the previous year
-        $previousYearSalesCount = Sale::whereYear('created_at', $previousYear)->count();
+        $previousYearSalesCount = Sale::whereBetween('created_at', [$startOfLastYear, $endOfLastYear])->sum('grand_total');
 
         // Fetch purchase data sum for the current year
-        $currentYearPurchasesSum = Purchase::whereYear('created_at', $currentYear)->count();
+        $currentYearPurchasesSum = Purchase::whereBetween('created_at', [$startOfCurrentYear, $endOfCurrentYear])->sum('total');
 
         // Fetch purchase data sum for the previous year
-        $previousYearPurchasesSum = Purchase::whereYear('created_at', $previousYear)->count();
+        $previousYearPurchasesSum = Purchase::whereBetween('created_at', [$startOfLastYear, $endOfLastYear])->sum('total');
 
         // Calculate the percentage increase in sales count
-        $salesIncreasePercentage = ($currentYearSalesCount - $previousYearSalesCount) / ($previousYearSalesCount ?: 1) * 100;
+        $salesIncreasePercentage = ($currentYearSalesCount - $previousYearSalesCount) / max(($previousYearSalesCount ?: 1), $currentYearSalesCount) * 100;
 
         // Calculate the percentage increase in purchases sum
-        $purchasesIncreasePercentage = ($currentYearPurchasesSum - $previousYearPurchasesSum) / ($previousYearPurchasesSum ?: 1) * 100;
+        $purchasesIncreasePercentage = ($currentYearPurchasesSum - $previousYearPurchasesSum) / max(($previousYearPurchasesSum ?: 1), $currentYearPurchasesSum) * 100;
 
         // Format the percentages
         $saleYearly = round($salesIncreasePercentage, 2);
-       $purchaseYearly = round($purchasesIncreasePercentage, 2);
+        $purchaseYearly = round($purchasesIncreasePercentage, 2);
 
         return view('admin.dashboard', compact('category', 'supplier', 'product', 'user', 'customer', 'sale', 'purchase', 'products', 'customerPercentage', 'supplierPercentage', 'userPercentage', 'productPercentage', 'salePercentage', 'purchasePercentage', 'categoryPercentage', 'salePaymentPercentage','saleData', 'purchaseData', 'months', 'saleYearly', 'purchaseYearly','payment'));
     }
 
     public function categoryPercentage(){
         // Get the date for yesterday
-        $yesterday = Carbon::yesterday()->toDateString();
+        $yesterday = Carbon::yesterday();
 
         // Count of categories for yesterday
         $categoriesYesterdayCount = Category::whereDate('created_at', $yesterday)->count();
 
         // Count of categories for today
         $categoriesTodayCount = Category::whereDate('created_at', Carbon::today())->count();
-        // dd($categoriesTodayCount);
+
         // Calculate the percentage change
         if ($categoriesYesterdayCount > 0) {
             $categoryPercentage = (($categoriesTodayCount - $categoriesYesterdayCount) / $categoriesYesterdayCount) * 100;
@@ -136,18 +148,18 @@ class HomeController extends Controller
     }
 
     public function supplierPercentage(){
+
         $startOfLastWeek = Carbon::now()->startOfWeek()->subWeek();
-        // Query for supplier count since last week
-        $supplierCount = Supplier::where('created_at', '>=', $startOfLastWeek)
-            ->count();
+        $endOfLastWeek = Carbon::now()->startOfWeek()->subSecond();
+
+        // Get the count of suppliers since last week
+        $countSinceLastWeek = Supplier::whereBetween('created_at', [$startOfLastWeek, $endOfLastWeek])->count();
+
+        // Get the total count of suppliers
+        $totalSuppliers = Supplier::count();
 
         // Calculate the percentage change
-        if ($supplierCount > 0) {
-            $supplierPercentage = $supplierCount;
-        } else {
-            // Handle division by zero
-            $supplierPercentage = 0;
-        }
+        $supplierPercentage = $totalSuppliers > 0 ? ($countSinceLastWeek / $totalSuppliers) * 100 : 0;
         return round($supplierPercentage, 2);
     }
 
@@ -166,46 +178,108 @@ class HomeController extends Controller
         // Count of users for the previous month
         $previousMonthUserCount = User::whereBetween('created_at', [$previousMonthStart, $previousMonthEnd])->count();
 
-        // Calculate the percentage change
-        if ($previousMonthUserCount > 0) {
+        if ($previousMonthUserCount != 0) {
+            // Calculate the percentage change
             $userPercentage = (($currentMonthUserCount - $previousMonthUserCount) / $previousMonthUserCount) * 100;
         } else {
             // Handle division by zero
-            $userPercentage = 0;
+            if ($currentMonthUserCount != 0) {
+                // If the previous month's user count is zero but the current month's user count is not,
+                // you might want to set the percentage to a default value, such as 100% or any other suitable value.
+                $userPercentage = 100; // or any other value that suits your logic
+            } else {
+                // If both previous and current month's user counts are zero,
+                // you might want to set the percentage to a default value, such as 0% or any other suitable value.
+                $userPercentage = 0; // or any other default value
+            }
         }
 
         return round($userPercentage, 2);
     }
 
     public function customerPercentage($customer){
-        $yesterdayStart = Carbon::yesterday()->startOfDay();
-        $countSinceYesterday = Customer::where('status', 1)
-        ->where('created_at', '>=', $yesterdayStart)
-        ->count();
+        $currentCustomerCount = Customer::where('status', 1)
+            ->whereDate('created_at',  Carbon::today())
+            ->count();
 
-        // Calculate the percentage
-        if ($customer > 0) {
-            $customerPercentage = $countSinceYesterday;
+        // Get the count of active customers from yesterday
+        $previousCustomerCount = Customer::where('status', 1)
+            ->whereDate('created_at', Carbon::yesterday())
+            ->count();
+
+        // Calculate the percentage change
+        if ($previousCustomerCount != 0) {
+            $customerPercentage = abs(($currentCustomerCount - $previousCustomerCount) / $previousCustomerCount) * 100;
         } else {
-            $customerPercentage = 0; // Avoid division by zero
+            // Handle division by zero
+            $customerPercentage = 0;
         }
+        
         return round($customerPercentage, 2);
     }
 
     public function salePercentage(){
-        $currentQuarterStart = Carbon::now()->startOfQuarter();
-        $currentQuarterEnd = Carbon::now()->endOfQuarter();
+        $currentDate = Carbon::now();
 
-        // Query for total sale count within the specified date range
-        $salePercentage = Sale::whereBetween('created_at', [$currentQuarterStart, $currentQuarterEnd])->sum('received_amount');
+        // Determine the quarters for the current and previous quarters
+        $currentQuarter = ceil($currentDate->quarter);
+        $currentYear = $currentDate->year;
+        $previousQuarter = $currentQuarter - 1;
+        $previousYear = $currentYear;
+
+        // Adjust the previous quarter and year if it's the first quarter of the year
+        if ($previousQuarter == 0) {
+            $previousQuarter = 4;
+            $previousYear = $currentYear - 1;
+        }
+
+        // Calculate the start and end dates for the current quarter
+        $currentQuarterStart = Carbon::createFromDate($currentYear, ($currentQuarter - 1) * 3 + 1, 1)->startOfMonth();
+        $currentQuarterEnd = Carbon::createFromDate($currentYear, $currentQuarter * 3, 1)->endOfMonth();
+
+        // Calculate the start and end dates for the previous quarter
+        $previousQuarterStart = Carbon::createFromDate($previousYear, ($previousQuarter - 1) * 3 + 1, 1)->startOfMonth();
+        $previousQuarterEnd = Carbon::createFromDate($previousYear, $previousQuarter * 3, 1)->endOfMonth();
+
+        // Get the sales for the current quarter
+        $currentQuarterSales = Sale::whereBetween('created_at', [$currentQuarterStart, $currentQuarterEnd])->sum('grand_total');
+
+        // Get the sales for the previous quarter
+        $previousQuarterSales = Sale::whereBetween('created_at', [$previousQuarterStart, $previousQuarterEnd])->sum('grand_total');
+
+        // Calculate the percentage change
+        if ($previousQuarterSales != 0) {
+            $salePercentage = ($currentQuarterSales - $previousQuarterSales) / $previousQuarterSales * 100;
+        } else {
+            $salePercentage = ($currentQuarterSales != 0) ? 100 : 0; // Avoid division by zero
+        }
 
         return round($salePercentage, 2);
     }
 
     public function purchasePercentage(){
-        $currentQuarterStart = Carbon::now()->startOfQuarter();
-        $currentQuarterEnd = Carbon::now()->endOfQuarter();
-        $purchasePercentage = Purchase::whereBetween('created_at', [$currentQuarterStart, $currentQuarterEnd])->sum('amount');
+        $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
+
+        // Retrieve the total purchase amount for last month
+        $totalPurchaseLastMonth = Purchase::whereBetween('created_at', [$startOfMonth, $endOfMonth])->sum('total');
+        $currentMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        $totalPurchaseCurrentMonth = Purchase::whereBetween('created_at', [$currentMonth, $endOfMonth])->sum('total'); 
+        // Avoid division by zero error
+        if ($totalPurchaseLastMonth != 0) {
+            // Calculate the percentage
+            $purchasePercentage = (($totalPurchaseCurrentMonth - $totalPurchaseLastMonth) / $totalPurchaseLastMonth) * 100;
+        } else {
+            if ($totalPurchaseCurrentMonth != 0) {
+                // Handle the case where last month's purchase is zero but current month's purchase is not
+                $purchasePercentage = 100; // or any other value that suits your logic
+            } else {
+                // Handle the case where both last month's and current month's purchases are zero
+                $purchasePercentage = 0; // or any other default value
+            }
+        }
         return round($purchasePercentage, 2);
     }
 
@@ -214,32 +288,40 @@ class HomeController extends Controller
         $currentWeekEnd = Carbon::now()->endOfWeek();
         $previousWeekStart = Carbon::now()->endOfWeek()->subWeek();
         $previousWeekEnd = Carbon::now()->endOfWeek()->subWeek();
-        $currentWeekTotalPayment = Sale::whereBetween('created_at', [$currentWeekStart, $currentWeekEnd])->sum('received_amount');
+        $currentWeekTotalPayment = Purchase::whereBetween('created_at', [$currentWeekStart, $currentWeekEnd])->sum('total');
 
         // Total payment amount for the previous week
-        $previousWeekTotalPayment = Sale::whereBetween('created_at', [$previousWeekStart, $previousWeekEnd])->sum('received_amount');
+        $previousWeekTotalPayment = Purchase::whereBetween('created_at', [$previousWeekStart, $previousWeekEnd])->sum('total');
 
         // Calculate the percentage change
-        if ($previousWeekTotalPayment > 0) {
+        if ($previousWeekTotalPayment != 0) {
+            // Calculate the percentage change
             $salePaymentPercentage = (($currentWeekTotalPayment - $previousWeekTotalPayment) / $previousWeekTotalPayment) * 100;
         } else {
             // Handle division by zero
-            $salePaymentPercentage = 0;
+            if ($currentWeekTotalPayment != 0) {
+                $salePaymentPercentage = 100; // or any other value that suits your logic
+            } else {
+                $salePaymentPercentage = 0; // or any other default value
+            }
         }
 
         return round($salePaymentPercentage, 2);
     }
 
     public function productPercentage(){
-        $startDate = Carbon::now()->startOfQuarter()->subMonths(3);
-        $endDate = Carbon::now()->endOfQuarter()->subMonths(3);
+        $startOfLastQuarter = Carbon::now()->startOfQuarter()->subQuarter();
+        $endOfLastQuarter = Carbon::now()->startOfQuarter()->subSecond();
 
-        // Query for products with status 1 within the specified date range
-        $productPercentage = Product::where('status', 1)
-            ->whereBetween('created_at', [$startDate, $endDate])
+        // Get the count of products with status 1 since the last quarter
+        $countSinceLastQuarter = Product::where('status', 1)
+            ->whereBetween('created_at', [$startOfLastQuarter, $endOfLastQuarter])
             ->count();
 
+        // Calculate the percentage
+        $totalProducts = Product::where('status', 1)->count();
+        $productPercentage = $totalProducts > 0 ? ($countSinceLastQuarter / $totalProducts) * 100 : 0;
 
-        return round($productPercentage,0);
+        return round($productPercentage, 2);
     }
 }

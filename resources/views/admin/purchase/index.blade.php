@@ -113,7 +113,7 @@
                         <div class="form-group row">
                             <label for="example-text-input" class="col-md-4 col-form-label form-control-label">Due</label>
                             <div class="col-md-7">
-                                <input class="form-control @error('due') is-invalid @enderror" name="due" type="text" value="{{ old('due') }}" id="due" readonly="">
+                                <input class="form-control @error('due') is-invalid @enderror change" name="due" type="text" value="{{ old('due') }}" id="due" readonly="">
 
                                 @error('due')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -225,10 +225,10 @@
                                 '<td>' + product.id + '</td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                                '<td><input type="text" class="form-control purchase_quantity"  id="'+ product.id +'"  name="purchase_quantity[]" value="' + product.quantity + '"></td>' +
+                                '<td><input type="text" class="purchase_quantity form-control"  id="'+ product.id +'" data-field="purchase_quantity"  name="purchase_quantity[]" value="' + product.quantity + '"></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="purchase_price" value="' + product.purchase_price + '"></td>' +
                                 '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
-                                '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
+                                '<td><button class="btn btn-danger remove-row mt-3 change">Remove</button></td>' +
                                 '</tr>';
                             $('input[id="total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
                             $('#managePurchaseTable tbody').append(newRow);
@@ -273,25 +273,24 @@
         });
     });
 
-    $('.purchase_quantity').on('click', function() {
+      $(document).on('change', '.purchase_quantity', function() {
         var productId = this.id;
-        alert(productId);
         updateTotal(productId);
     });
 
     function updateTotal(productId) {
         // Calculate total based on quantity and unit_price
-        var quantity = parseFloat($('input[data-id="' + productId + '"][data-field="purchase_quantity"]').val());
+        var quantity = parseFloat($('input[id="' + productId + '"][data-field="purchase_quantity"]').val());
         var unitPrice = parseFloat($('input[data-id="' + productId + '"][data-field="purchase_price"]').val());
         var total = isNaN(quantity) || isNaN(unitPrice) ? 0 : quantity * unitPrice;
-        alert(total);
-        alert(quantity);
-
         // Update total column in the table
         $('input[data-id="' + productId + '"][data-field="total"]').val(total);
+        updateGrandTotal();
     }
     $(document).on('click', '.remove-row', function() {
         $(this).closest('tr').remove();
+        updateDue();
+        updateGrandTotal();
     });
 
     function updateGrandTotal() {
@@ -303,6 +302,7 @@
             }
         });
         $('input[name="total"]').val(grandTotal.toFixed(2)); // Assuming 2 decimal places for grand total
+        updateDue();
     }
     $('#amount').on('input', function() {
         updateDue();
@@ -314,6 +314,9 @@
         $('#due').val(amountDue.toFixed(2));
     }
 
+    $('.change').on('click', function() {
+        updateGrandTotal();
+    });
 </script>
 
 @endsection

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-
 class SaleHistory extends Model
 {
     use HasFactory;
@@ -18,6 +17,6 @@ class SaleHistory extends Model
 
     public function Sale(): BelongsTo
     {
-        return $this->belongsTo(Purchase::class, 'sale_id', 'id');
+        return $this->belongsTo(Sale::class, 'invoice_code', 'id');
     }
 }

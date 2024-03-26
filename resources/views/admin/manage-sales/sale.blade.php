@@ -44,7 +44,7 @@
             processing: true
             , serverSide: true
             , ajax: {
-                url: "{{ route('manage-sale.get-data') }}"
+                url: "{{ route('sale.get-data') }}"
                 , type: "POST"
             }
             , columns: [{
@@ -85,13 +85,14 @@
                     data: 'received_amount'
                     , name: 'received_amount'
                 }
-                , {
-                    data: 'date'
-                    , name: 'date'
-                }
+                
                 , {
                     data: 'payment_type'
                     , name: 'payment_type'
+                }
+                , {
+                    data: 'date'
+                    , name: 'date'
                 }
                 , {
                     data: 'action'

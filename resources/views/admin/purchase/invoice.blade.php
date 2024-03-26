@@ -16,7 +16,7 @@
                      <div><strong>Comany</strong></div>
                      <div>Phone: {{ $purchase1->Supplier->phone}}</div>
                      <div>Email: {{ $purchase1->Supplier->email }}</div>
-                     <div>Currency: DH</div>
+                     <!-- <div>Currency: DH</div> -->
                   </div>
                   <div class="col-sm-8 d-flex justify-content-end">
                      <div class="col-sm-4">
@@ -49,7 +49,7 @@
                         ?> 
                         @foreach($purchases as $purchase)
                         <?php 
-                            $product = \App\Models\PurchaseHistory::where('purchase_id', $purchase->id)->get();
+                            $product = \App\Models\PurchaseHistory::where('purchase_code', $purchase->purchase_code)->get();
                             $total =  $purchase->quantity * $purchase->Product->purchase_price;
                             $subTotal += $total;
                         ?>
@@ -76,7 +76,7 @@
                               </tr>
                               <tr>
                                  <td class="left"><strong>Total Paid</strong></td>
-                                 <td class="right">{{ $subTotal - $purchase1->due }}</td>
+                                 <td class="right">{{ $purchase1->amount }}</td>
                               </tr>
                               <tr>
                                  <td class="left"><strong>Payment Due</strong></td>

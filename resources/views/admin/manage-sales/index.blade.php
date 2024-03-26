@@ -173,8 +173,9 @@
                             <div class="col-md-7">
                                 <input class="form-control @error('due') is-invalid @enderror" name="due" type="number" value="{{ old('due') }}" id="due" readonly="">
                                 @error('due')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <div id="error_message" class="error my-1"></div>
                             </div>
                         </div>
 
@@ -195,7 +196,7 @@
 
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-4 col-md-4">Create New Sale</button>
+                        <button type="submit" id="submit" class="btn btn-primary mt-4 col-md-4">Create New Sale</button>
                     </div>
                 </div>
             </div>
@@ -260,26 +261,61 @@
         $('#manageSaleTable').DataTable();
     });
 
-    $('.product-data').change(function() {
+    $(document).on('keypress', '#receive_amount', function() {
+        updateDue();
+    });
+
+     // Function to update the due amount
+    function updateDue() {
+        var grandTotal = parseFloat($('#total').val()) || 0;
+        var amountPaid = parseFloat($('#receive_amount').val()) || 0;
+        if (amountPaid > grandTotal) {
+            $('#error_message').text("Received amount cannot be greater than grand total.");
+            $('#submit').prop('disabled', true);
+        } else {
+            $('#error_message').text("");
+            $('#submit').prop('disabled', false);
+        }
+        var due = grandTotal - amountPaid;
+        $('#due').val(due.toFixed(2));
+    }
+
+    function product() {
         // e.preventDefault();
         var productId = $('#product_id').val();
         var subCategoryId = $('#sub_category_id').val();
+        var categoryId = $('#category_id').val();
+        var subCategorySelect = document.getElementById('sub_category_id');
+        subCategorySelect.innerHTML = '<option value="">Please Select Sub Category</option>';
+        var productSelect = document.getElementById('product_id');
+        productSelect.innerHTML = '<option value="">Please Select Product</option>';
+
         $.ajax({
             url: '/manage-sale-get-data/'
             , type: 'POST'
             , data: {
                 productId: productId
-                , subCategoryId: subCategoryId
+                , subCategoryId: subCategoryId,
+                categoryId: categoryId
             , }
             , success: function(response) {
                 // $('#manageSaleTable tbody').empty();
                 $('#manageSaleTable tbody').empty();
-
-
+                $.each(response.subCategory, function(index, subcategory) {
+                    var option = document.createElement('option');
+                    option.value = subcategory.id;
+                    option.text = subcategory.name;
+                    subCategorySelect.appendChild(option);
+                });
+                
                 if (response.product.length > 0) {
                     var sub_total = 0;
                     var product_id = [];
+                    var option = document.createElement('option');
                     $.each(response.product, function(index, product) {
+                        option.value = product.id;
+                        option.text = product.name;
+                        productSelect.appendChild(option);
                         $('.tr-wrapper').closest('tr').remove();
                         var total = product.quantity * product.selling_price;
                         sub_total += total;
@@ -290,22 +326,28 @@
                             '<td>' + product.id + '</td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" name="sale_quantity[]" value="' + product.quantity + '"></td>' +
+                            '<td><input type="text" class="form-control sale_quantity" class="editable" data-id="' + product.id + '" data-field="sale_quantity" name="sale_quantity[]" value="' + product.quantity + '"></td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="selling_price" value="' + product.selling_price + '"></td>' +
                             '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
                             '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
                             '</tr>';
                         $('input[name="sub_total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
+                        $('input[name="data_id"]').val(dataIdString);
                         $('#manageSaleTable tbody').append(newRow);
-
+                        updateGrandTotal();
+                        updateSubTotal();
+                        updateDue();
+                        calculateGrandTotal();
                     });
                 }
             }
         });
 
-    });
+    };
 
-    
+    $(document).on('change', '.product-data', function(){
+        product();
+    });
     $(document).on('input', '#manageSaleTable input', function() {
         var $input = $(this);
         var productId = $input.closest('tr').find('td:first').text(); // Get the product ID from the first column of the current row
@@ -374,17 +416,10 @@
         $('input[name="total"]').val(grandTotal.toFixed(2)); // Assuming 2 decimal places for grand total
     }
 
-    // Function to update the due amount
-    function updateDue() {
-        var grandTotal = parseFloat($('#total').val()) || 0;
-        var amountPaid = parseFloat($('#receive_amount').val()) || 0;
-        var due = grandTotal - amountPaid;
-        $('#due').val(due.toFixed(2));
-    }
-
     $('#receive_amount').on('input', function() {
         updateDue();
     });
+    
 
 </script>
 
@@ -400,6 +435,9 @@
             // Show sub category dropdown
             document.getElementById('sub_category').style.display = 'block';
             document.getElementById('product').style.display = 'block';
+
+            // product();
+
             // Fetch sub categories based on the selected category id
             fetch('/get-sub-categories/' + categoryId)
                 .then(response => response.json())
@@ -419,29 +457,7 @@
                             option.text = product.name;
                             productSelect.appendChild(option);
                         });
-                        $('.tr-wrapper').closest('tr').remove();
-                        var sub_total = 0;
-                        var product_id = [];
-                        data.data_product.forEach(function(product) {
-                            var total = product.quantity * product.selling_price;
-                            sub_total += total;
-                            product_id.push(product.id);
-                            var dataIdString = product_id.join(',');
-                            var newRow = '<tr><input type="hidden" name="data_id[]" value="'+ product.id +'" id="data_id">' +
-                                '<td>' + product.id + '</td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" name="sale_quantity[]" value="' + product.quantity + '"></td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="selling_price" value="' + product.selling_price + '"></td>' +
-                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
-                                '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
-                                '</tr>';
-                            $('input[name="sub_total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
-                            $('input[name="data_id"]').val(dataIdString);
-                            $('#manageSaleTable tbody').append(newRow);
-                        });
-                    }
-
+                    }   
                 })
 
                 .catch(error => console.error('Error:', error));
@@ -483,5 +499,13 @@
     // Initial calculation when page loads
     calculateGrandTotal();
 
+    $(document).ready(function() {
+        $(document).on('keyup', '.sale_quantity', function () {
+            updateGrandTotal();
+            updateSubTotal();
+            updateDue();
+            calculateGrandTotal();
+        });
+    });
 </script>
 @endsection
