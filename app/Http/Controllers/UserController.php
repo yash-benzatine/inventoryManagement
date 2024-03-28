@@ -151,7 +151,7 @@ class UserController extends Controller
 
     public function getData()
     {
-        $data = User::orderBy('id', 'DESC');
+        $data = User::select('*');
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('roles', function ($user) {
@@ -162,11 +162,11 @@ class UserController extends Controller
                 return $roles;
             })
             ->addColumn('action', function ($user) { // Change $row to $user
-                $actionBtn = '<a class="btn btn-info user-permission mx-2" href="#" data-toggle="modal" data-target="#user-modal-permission" data-id="'. $user->id .'" title="User Permission"><span class="btn-inner--icon"><i class="fab fa fa-user-secret mx-1"></i>Permissions</a>' .
-                '<a class="btn btn-primary btn-icon-only mx-2" href="' . route('users.edit', $user->id) . '" title="Edit User"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>' .
+                $actionBtn = '<a class="btn btn-info user-permission mx-2 my-1" href="#" data-toggle="modal" data-target="#user-modal-permission" data-id="'. $user->id .'" title="User Permission"><span class="btn-inner--icon"><i class="fab fa fa-user-secret mx-1"></i>Permissions</a>' .
+                '<a class="btn btn-primary btn-icon-only mx-2 my-1" href="' . route('users.edit', $user->id) . '" title="Edit User"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>' .
                 '<form method="POST" action="' . route('users.destroy', $user->id) . '" style="display:inline">' .
                 '<input type="hidden" name="_method" value="DELETE">' .
-                '<button type="submit" class="btn btn-danger btn-icon-only"><span class="btn-inner--icon" title="Delete User"><i class="fab fa fa-trash"></i></button>' .
+                '<button type="submit" class="btn btn-danger btn-icon-only my-1"><span class="btn-inner--icon" title="Delete User"><i class="fab fa fa-trash"></i></button>' .
                 '</form>';
                 return $actionBtn;
             })

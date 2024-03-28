@@ -45,17 +45,10 @@
                                     <a href="{{ route('reset-password') }}" class="text-primary text-gradient font-weight-bold">here</a>
                                 </p>
                             </div>
-                            <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                                <p class="mb-4 text-sm mx-auto">
-                                    Don't have an account?
-                                    <a href="{{ route('register') }}" class="text-primary text-gradient font-weight-bold">Sign up</a>
-                                </p>
-                            </div>
                         </div>
                     </div>
                     <div class="col-8 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
-                        <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden" style="background-image: url('{{ asset('img/signin-ill.jpg') }}');
-              background-size: cover;">
+                        <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden" style="background-image: url('{{ asset('img/signin-ill.jpg') }}');background-size: cover;">
                             <span class="mask bg-gradient-primary opacity-6"></span>
                         </div>
                     </div>

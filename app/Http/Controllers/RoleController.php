@@ -148,9 +148,29 @@ class RoleController extends Controller
 
     public function getData()
     {
-        $data = Role::orderBy('id', 'DESC');
+        $data = Role::select('*');
         return Datatables::of($data)
             ->addIndexColumn()
+             ->addColumn('permission', function ($role) {
+                $role = Role::find($role->id);
+                $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
+                    ->where("role_has_permissions.role_id",$role->id)
+                    ->get();
+                 $permissionNames = '<div style="text-align: left;">'; // Initialize a row
+
+                foreach ($rolePermissions as $index => $permission) {
+                    if ($index > 0 && $index % 8 == 0) {
+                        // Start a new row after every 4 permissions (adjust as needed)
+                        $permissionNames .= '</div><div style="text-align: left;">';
+                    }
+
+                    // Append each permission name wrapped in a span to the $permissionNames string
+                    $permissionNames .= '<span class="badge badge-primary">' . $permission->name . '</span>';
+                }
+
+                $permissionNames .= '</div>'; // Close the last row
+                return $permissionNames;
+            })
             ->addColumn('action', function ($role) {
                 $actionBtn = '<form action="' . route('roles.destroy', $role->id) . '" method="post">' .
                                 csrf_field() .
@@ -169,7 +189,7 @@ class RoleController extends Controller
                 $actionBtn .= '</form>';
                 return $actionBtn;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'permission'])
             ->make(true);
     }
 }

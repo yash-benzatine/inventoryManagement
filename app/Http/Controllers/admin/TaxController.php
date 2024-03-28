@@ -120,11 +120,11 @@ class TaxController extends Controller
 
     public function getData()
     {
-        $data = Tax::orderBy('id', 'DESC');
+        $data = Tax::select('*');
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex align-items-center"><a href="#" data-toggle="modal" data-target="#editTax" data-id="'. $row->id .'" class="btn btn-primary btn-icon-only edit-btn mx-2" title="Edit Tax"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>
+                $actionBtn = '<div class="d-flex align-items-center my-1"><a href="#" data-toggle="modal" data-target="#editTax" data-id="'. $row->id .'" class="btn btn-primary btn-icon-only edit-btn mx-2" title="Edit Tax"><span class="btn-inner--icon"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('tax.delete', ['tax' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'

@@ -177,7 +177,7 @@ class SupplierController extends Controller
 
     public function getData()
     {
-        $data = Supplier::orderBy('id', 'DESC');
+        $data = Supplier::select('*');
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('status', function ($row) {
@@ -188,16 +188,10 @@ class SupplierController extends Controller
             })
             ->addColumn('image', function ($row) {
                 if($row->image != ''){
-                    return '<img src="'. asset('admin/supplier/'. $row->image) .'" height="50" width="50" class="border-radius-lg shadow-sm">';
+                    return '<a href="'. asset('admin/supplier/'. $row->image) .'" target="_blank"><img src="'. asset('admin/supplier/'. $row->image) .'" height="50" width="50" class="border-radius-lg shadow-sm"></a>';
                 }else{
                     return '-';
                 }
-            })
-            ->addColumn('gender', function ($row) {
-                $gender = ($row->gender == 'm') ? 'Male' : 'Female';
-                $badgeColor = ($row->gender == 'm') ? 'default' : 'primary';
-
-                return '<span class="badge badge-pill badge-'. $badgeColor .'">' . $gender . '</span>';
             })
             ->addColumn('action', function ($row) {
                 $actionBtn = '<div class="d-flex px-3 py-1 align-items-center"><a href="#" data-toggle="modal" data-target="#editSupplier" data-id="'. $row->id .'" class="btn btn-primary btn-icon-only edit-btn mx-2" title="Edit Supplier">
@@ -210,7 +204,7 @@ class SupplierController extends Controller
                                         </form></div>';
                 return $actionBtn;
             })  
-            ->rawColumns(['action','status', 'gender','image'])
+            ->rawColumns(['action','status', 'image'])
             ->make(true);
     }
 }

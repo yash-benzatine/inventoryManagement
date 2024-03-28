@@ -49,17 +49,24 @@
                                     @enderror
                                 </div>
                                 <!---->
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="purchase_price" class="form-label">Purchase Price</label>
                                     <input type="text" id="purchase_price" name="purchase_price" class="form-control @error('purchase_price') is-invalid @enderror">
                                     @error('purchase_price')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="selling_price" class="form-label">Selling Price</label>
                                     <input type="text" id="selling_price" name="selling_price" class="form-control  @error('selling_price') is-invalid @enderror">
                                     @error('selling_price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="text" id="quantity" name="quantity" class="form-control  @error('quantity') is-invalid @enderror">
+                                    @error('quantity')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -82,8 +89,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end mt-4">
-                                    <a href="{{ url()->previous() }}" class="btn btn-light m-0">Back</a>
-                                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Save</button>
+                                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Submit</button>
                                 </div>
                             </div>
                         </form>

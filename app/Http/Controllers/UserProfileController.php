@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserProfileController extends Controller
 {
+
+    function __construct()
+    {
+        $this->middleware('permission:profile-list', ['only' => ['index','update']]);
+    }
+
+
     public function show()
     {
         return view('admin.user-profile');

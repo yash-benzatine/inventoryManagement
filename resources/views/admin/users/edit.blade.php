@@ -6,13 +6,7 @@
     <div class="col-12">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between">
-                <div class="pull-left">
-                    <h5>Edit New User</h5>
-                </div>
-                <div class="pull-right">
-                    <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
-                </div>
-
+                <h5>Edit New User</h5>
             </div>
             <div class="card-body px-4 pt-0 pb-2">
                 @if (count($errors) > 0)
@@ -59,7 +53,7 @@
                             {!! Form::select('roles[]', $roles,$userRole, array('class' => 'form-control','multiple')) !!}
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                    <div class="d-flex justify-content-end mt-4">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </div>

@@ -46,8 +46,7 @@
     });
     $(function() {
         var table = $('#subCategoryTable').DataTable({
-
-            processing: true
+            processing: false
             , serverSide: true
             , ajax: {
                 url: "{{ route('subCategory.get-data') }}"
@@ -61,7 +60,8 @@
                     }
                 }, {
                     data: 'cat_id'
-                    , name: 'cat_id'
+                    , name: 'cat_id',
+                    orderable: true
                 }
                 , {
                     data: 'name'
@@ -73,7 +73,8 @@
                 }
                 , {
                     data: 'status'
-                    , name: 'status'
+                    , name: 'status',
+                    orderable: false
                 }
                 , {
                     data: 'action'

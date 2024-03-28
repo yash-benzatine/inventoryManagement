@@ -70,10 +70,10 @@
 <script type="text/javascript">
     $(function() {
         var table = $('#saleTable').DataTable({
-            processing: true
+            processing: false
             , serverSide: true
             , ajax: {
-                url: "{{ route('manage-sale.get-data') }}"
+                url: "{{ route('sale.report') }}"
                 , type: "POST"
                 , data: function(d) {
                     d.from = $('#from').val();
@@ -93,7 +93,8 @@
                 }
                 , {
                     data: 'customer'
-                    , name: 'customer'
+                    , name: 'customer',
+                    orderable: false
                 }
                 , {
                     data: 'sub_total'

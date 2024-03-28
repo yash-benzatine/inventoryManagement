@@ -18,7 +18,7 @@
                                 <th>Company Name</th>
                                 <th>Name
                                 </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                <th>
                                     Email
                                 </th>
                                 <th>
@@ -197,7 +197,9 @@
     });
     $(function() {
         var table = $('#supplierTable').DataTable({
-            processing: true
+            processing: false,
+            order: [[0, "desc"]],
+            ordering: true
             , serverSide: true
             , ajax: {
                 url: "{{ route('supplier.get-data') }}"
@@ -228,11 +230,13 @@
                 }
                 , {
                     data: 'status'
-                    , name: 'status'
+                    , name: 'status' ,
+                    orderable: false
                 }
                 , {
                     data: 'image'
-                    , name: 'image'
+                    , name: 'image',
+                    orderable: false
                 }
                 , {
                     data: 'action'

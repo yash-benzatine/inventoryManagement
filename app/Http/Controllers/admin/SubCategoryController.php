@@ -101,7 +101,7 @@ class SubCategoryController extends Controller
 
     public function getData()
     {
-        $data = Category::with(['category'])->where('cat_id', '!=', 0)->orderBy('id', 'DESC');
+        $data = Category::select('*')->with(['category'])->where('cat_id', '!=', 0);
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('cat_id', function ($row) {
@@ -115,7 +115,7 @@ class SubCategoryController extends Controller
                 return '<span class="badge badge-pill badge-sm badge-' . $badgeColor . '">' . $status . '</span>';
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex align-items-center"><a href="' . route('sub-category.edit', $row->id). '" class="btn btn-primary btn-icon-only mx-2"><span class="btn-inner--icon" title="Edit Sub Category"><i class="fab fa fa-edit"></i></a>
+                $actionBtn = '<div class="d-flex align-items-center my-1"><a href="' . route('sub-category.edit', $row->id). '" class="btn btn-primary btn-icon-only mx-2"><span class="btn-inner--icon" title="Edit Sub Category"><i class="fab fa fa-edit"></i></a>
                 <form action="'. route('sub-category.destroy', ['category' => $row]) .'" method="POST">
                                             '.csrf_field().'
                                             '.method_field('DELETE').'

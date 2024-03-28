@@ -22,8 +22,10 @@ class SaleController extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:sales-history|sale-store', ['only' => ['index','store']]);
-         $this->middleware('permission:sale-store', ['only' => ['create','store']]);
+        $this->middleware('permission:sales-history|sale-store|sale-report', ['only' => ['index','store']]);
+        $this->middleware('permission:sale-store', ['only' => ['create','store']]);
+        $this->middleware('permission:sale-report', ['only' => ['reportIndex', 'report']]);
+        $this->middleware('permission:sales-history', ['only' => ['index2']]);  
     }
 
     public function index(Request $request)
@@ -167,9 +169,9 @@ class SaleController extends Controller
 
     public function getData(Request $request)
     {
-        $data = Sale::with(['Customer' => function($query){
+        $data = Sale::select('*')->with(['Customer' => function($query){
             $query->withTrashed();
-        }])->orderBy('id', 'DESC')->get();
+        }]);
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -192,7 +194,7 @@ class SaleController extends Controller
     public function getData1(Request $request)
     {
         // $data = Product::where(['id'=>$request->productId])->get();
-        $data = Product::with(['SubCategory'])
+        $data = Product::select('*')->with(['SubCategory'])
             ->when($request->filled('productId'), function ($query) use ($request) {
                 return $query->where('id', $request->productId);
             })
@@ -202,10 +204,14 @@ class SaleController extends Controller
             ->when($request->filled('categoryId'), function ($query) use ($request) {
                 return $query->where('category_id', $request->categoryId);
             })
-            ->orderBy('id', 'DESC')
             ->get();
+            if($request->productId != ""){
+                $totalQuantitySold = SaleHistory::where('product_id', $request->productId)->sum('quantity');
+            }else{
+                $totalQuantitySold = "";
+            }
         $subCategory = Category::where(['cat_id'=>$request->categoryId , 'status'=>1])->get();    
-        return response()->json(['product'=>$data, 'status'=>1, 'subCategory'=> $subCategory]);
+        return response()->json(['product'=>$data, 'status'=>1, 'subCategory'=> $subCategory, 'total_quantity' => $totalQuantitySold]);
     }
 
     public function updateProducts(Request $request){
@@ -228,7 +234,7 @@ class SaleController extends Controller
     }
 
     public function report(Request $request){
-        $data = Sale::with(['Customer' => function($query){
+        $data = Sale::select('*')->with(['Customer' => function($query){
             $query->withTrashed();
         }]);
          if ($request->filled('from') && $request->filled('to')) {
@@ -239,7 +245,6 @@ class SaleController extends Controller
                 ->whereDate('date', '<=', $toDate);
         }
 
-        $data->orderBy('id', 'DESC');
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('customer', function ($row) {

@@ -46,7 +46,7 @@
     $(function() {
         var table = $('#productTable').DataTable({
 
-            processing: true
+            processing: false
             , serverSide: true
             , ajax: {
                 url: "{{ route('product.get-data') }}"
@@ -76,14 +76,16 @@
                 }
                 , {
                     data: 'image'
-                    , name: 'image'
+                    , name: 'image',
+                    orderable: false
                 }, {
                     data: 'quantity'
                     , name: 'quantity'
                 }
                 , {
                     data: 'inventory'
-                    , name: 'inventory'
+                    , name: 'inventory',
+                    orderable: false
                 }
                 , {
                     data: 'note'
@@ -91,7 +93,8 @@
                 }
                 , {
                     data: 'status'
-                    , name: 'status'
+                    , name: 'status',
+                    orderable: false
                 }
                 , {
                     data: 'action'

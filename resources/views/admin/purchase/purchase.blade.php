@@ -42,7 +42,7 @@
     $(function() {
         var table = $('#purchaseTable').DataTable({
 
-            processing: true
+            processing: false
             , serverSide: true
             , ajax: {
                 url: "{{ route('purchase.get-data') }}"
@@ -60,7 +60,8 @@
                 }
                 , {
                     data: 'supplier_id'
-                    , name: 'supplier_id'
+                    , name: 'supplier_id',
+                    orderable: false
                 }
                 , {
                     data: 'amount'

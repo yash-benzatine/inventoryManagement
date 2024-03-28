@@ -152,7 +152,7 @@ class CategoryController extends Controller
 
     public function getData()
     {
-        $data = Category::where('cat_id', '=', 0)->orderBy('id', 'DESC');
+        $data = Category::select('*')->where('cat_id', '=', 0);
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('status', function ($row) {

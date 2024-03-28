@@ -12,6 +12,7 @@ use App\Models\Sale;
 use DB;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Storage;
 
 class ProductController extends Controller
 {
@@ -50,6 +51,7 @@ class ProductController extends Controller
             'status' => 'required|in:0,1',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust image validation rules as needed
             'note' => 'nullable|string',
+            'quantity' => 'required|numeric'
         ]);
 
         // Store the product with the generated serial number
@@ -61,6 +63,7 @@ class ProductController extends Controller
         $product->selling_price = $request->selling_price;
         $product->status = $request->status;
         $product->note = $request->note;
+        $product->quantity = $request->quantity;
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -104,7 +107,10 @@ class ProductController extends Controller
             'status' => 'required|in:0,1',
             // 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust image validation rules as needed
             'note' => 'nullable|string',
+            'quantity' => 'required|numeric'
         ]);
+        $oldImage = $product->image;
+
 
         // Store the product with the generated serial number
         $product->serial_number = $request->serial_number;
@@ -114,7 +120,8 @@ class ProductController extends Controller
         $product->selling_price = $request->selling_price;
         $product->status = $request->status;
         $product->note = $request->note;
-
+        $product->quantity = $request->quantity;
+    
         // Handle image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -123,8 +130,12 @@ class ProductController extends Controller
             $product->image = $imageName;
         }
 
-        $product->save();
-        return redirect()->route('product.index')->with(['message'=> 'Product updated successfully.', 'alert-type' => 'success']);
+        if($product->save()){
+            if ($oldImage) {
+                Storage::delete('admin/products' . $oldImage);
+            }
+            return redirect()->route('product.index')->with(['message'=> 'Product updated successfully.', 'alert-type' => 'success']);
+        }
     }
 
     /**
@@ -138,7 +149,7 @@ class ProductController extends Controller
 
     public function getData()
     {
-        $data = Product::with(['category'])->orderBy('id', 'DESC');
+        $data = Product::select('*')->with(['category']);
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('status', function ($row) {
@@ -166,7 +177,7 @@ class ProductController extends Controller
             })
             ->addColumn('image', function ($row) {
                 if($row->image != ''){
-                    return '<img src="'. asset('admin/products/'. $row->image) .'" height="90" width="90" class="shadow-sm">';
+                    return '<a href="'. asset('admin/products/'. $row->image) .'" target="_blank"><img src="'. asset('admin/products/'. $row->image) .'" height="90" width="90" class="shadow-sm"></a>';
                 }else{
                     return '-';
                 }

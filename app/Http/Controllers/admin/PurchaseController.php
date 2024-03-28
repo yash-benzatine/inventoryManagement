@@ -19,8 +19,10 @@ class PurchaseController extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:purchase-history|purchase-store', ['only' => ['index','store']]);
-         $this->middleware('permission:purchase-store', ['only' => ['create','store']]);
+        $this->middleware('permission:purchase-list|purchase-history|purchase-store|purchase-report', ['only' => ['index','store','reportIndex','report']]);
+        $this->middleware('permission:purchase-store', ['only' => ['create','store']]);
+        $this->middleware('permission:purchase-report', ['only' => ['reportIndex', 'report']]);
+        $this->middleware('permission:purchase-history', ['only' => ['index2']]);  
     }
 
     public function index(Request $request)
@@ -103,9 +105,9 @@ class PurchaseController extends Controller
 
     public function getData(Request $request)
     {
-        $data = Purchase::with(['Supplier' => function($query) {
+        $data = Purchase::select('*')->with(['Supplier' => function($query) {
         $query->withTrashed(); // Filter out soft-deleted suppliers
-    }])->orderBy('id', 'DESC')->get(); // Filter out soft-deleted purchases
+    }])->get(); // Filter out soft-deleted purchases
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -113,7 +115,7 @@ class PurchaseController extends Controller
                 return $row->Supplier->name;
             })
             ->addColumn('action', function ($row) {
-                $actionBtn = '<div class="d-flex align-items-center"><a href="' . route('purchase.show', $row->purchase_code). '" class="btn btn-primary mx-2" title="View Purchase Detail"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
+                $actionBtn = '<div class="d-flex align-items-center my-1"><a href="' . route('purchase.show', $row->purchase_code). '" class="btn btn-primary mx-2" title="View Purchase Detail"><span class="btn-inner--icon"><i class="fab fa fa-eye mx-1"></i>View</a>';
                 
                 if($row->due != 0){
                     $action = '<a href="'. route('purchase.due', $row->purchase_code) .'" class="btn btn-info" title="Purchase Due Detail"><span class="btn-inner--icon"><i class="fab fa fa-money mx-1"></i>Due</a></div>';
@@ -151,7 +153,9 @@ class PurchaseController extends Controller
     }
 
     public function report(Request $request){
-        $data = Purchase::with(['Supplier']);
+        $data = Purchase::select('*')->with(['Supplier' => function($query){
+            $query->withTrashed();
+        }]);
 
         if ($request->filled('from') && $request->filled('to')) {
             $fromDate = Carbon::parse($request->from)->startOfDay(); // Parse and set time to start of day
@@ -160,8 +164,6 @@ class PurchaseController extends Controller
             $data->whereDate('date', '>=', $fromDate)
                 ->whereDate('date', '<=', $toDate);
         }
-
-        $data->orderBy('id', 'DESC');
 
         // Fetch the data
         $result = $data->get();

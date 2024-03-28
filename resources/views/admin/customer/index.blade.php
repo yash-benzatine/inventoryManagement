@@ -17,7 +17,7 @@
                                 <th>Id</th>
                                 <th>Name
                                 </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                <th>
                                     Email
                                 </th>
                                 <th>
@@ -56,7 +56,9 @@
     });
     $(function() {
         var table = $('#customerTable').DataTable({
-            processing: true
+            order: [[0, "desc"]],
+            ordering: true,
+            processing: false
             , serverSide: true
             , ajax: {
                 url: "{{ route('customer.get-data') }}"
@@ -71,11 +73,14 @@
                 }
                 , {
                     data: 'name'
-                    , name: 'name'
+                    , name: 'name',
+                    orderable: true
+                    
                 }
                 , {
                     data: 'email'
-                    , name: 'email'
+                    , name: 'email',
+                    orderable: true
                 }
                 , {
                     data: 'phone'
@@ -91,11 +96,13 @@
                 }
                 , {
                     data: 'status'
-                    , name: 'status'
+                    , name: 'status',
+                    orderable: false
                 }
                 , {
                     data: 'gender'
-                    , name: 'gender'
+                    , name: 'gender',
+                    orderable: false
                 }
                 , {
                     data: 'image'

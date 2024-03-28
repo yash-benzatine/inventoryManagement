@@ -64,6 +64,7 @@
                                 <div class="form-group col-md-4">
                                     <label for="image" class="form-label">Image</label>
                                     <input type="file" class="form-control @error('image') is-invalid @enderror" name="image" id="customFileLang" lang="en">
+                                    <img src="{{ asset('admin/customer/'. $customer->image) }}" height="100" width="100" class="mt-2">
                                     @error('image')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -82,8 +83,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end mt-4">
-                                    <a href="{{ url()->previous() }}" class="btn btn-light m-0">Back</a>
-                                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Save</button>
+                                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Submit</button>
                                 </div>
 
                             </div>

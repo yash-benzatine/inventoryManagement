@@ -77,7 +77,8 @@
 <script type="text/javascript">
     $(function() {
         var table = $('#userTable').DataTable({
-            processing: true
+            processing: false,
+            order: [[0, "desc"]]
             , serverSide: true
             , ajax: {
                 url: "{{ route('users.get-data') }}"

@@ -2146,7 +2146,6 @@ progress {
 }
 
 .table> :not(caption)>*>* {
-    padding: 0.5rem;
     background-color: var(--bs-table-bg);
     border-bottom-width: 1px;
     box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
@@ -21668,7 +21667,7 @@ hr.horizontal.gray-light {
 .table.align-items-center td,
 .table.align-items-center th {
     vertical-align: middle;
-    /* text-align: center; */
+    text-align: center;
 }
 
 .table tbody tr:last-child td {
@@ -24335,9 +24334,6 @@ screen and (-ms-high-contrast: active) {
     color: #fff!important
 }
 
-display: block;
-
-}
 .flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+1) .flatpickr-day.inRange:nth-child(7n+7) {
     box-shadow: none !important;
 }
@@ -25949,6 +25945,4 @@ screen and (-ms-high-contrast: active) {
 .dark-version h5,
 .dark-version h6 {
     color: #fff!important
-}
-
 }

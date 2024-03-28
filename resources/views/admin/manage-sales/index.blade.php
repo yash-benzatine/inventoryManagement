@@ -38,7 +38,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive p-0">
+                    <div class="table-responsive p-0" id="table" style="display: none;">
                         <table class="table align-items-center mb-0" id="manageSaleTable">
                             <thead>
                                 <tr>
@@ -76,7 +76,7 @@
                 </div>
             </div>
             @csrf
-            <div class="row">
+            <div class="row mt-6">
                 <div class="col-md-6">
                     <h6>Supplier</h6>
                     <div class="card-wrapper">
@@ -305,6 +305,9 @@
                     var option = document.createElement('option');
                     option.value = subcategory.id;
                     option.text = subcategory.name;
+                    if (subcategory.id == subCategoryId) {
+                        option.selected = true;
+                    }
                     subCategorySelect.appendChild(option);
                 });
                 
@@ -315,30 +318,49 @@
                     $.each(response.product, function(index, product) {
                         option.value = product.id;
                         option.text = product.name;
+                        if (product.id == productId) {
+                            option.selected = true;
+                        }
                         productSelect.appendChild(option);
-                        $('.tr-wrapper').closest('tr').remove();
-                        var total = product.quantity * product.selling_price;
-                        sub_total += total;
-                        product_id.push(product.id);
-                        var dataIdString = product_id.join(',');
+                        if(response.total_quantity != ""){
+                            var total_quantity = product.quantity - response.total_quantity;
+                            $('.tr-wrapper').closest('tr').remove();
+                            var total = product.quantity * product.selling_price;
+                            sub_total += total;
+                            product_id.push(product.id);
+                            var dataIdString = product_id.join(',');
 
-                        var newRow = '<tr><input type="hidden" name="data_id[]" value="'+ product.id +'" id="data_id">' +
-                            '<td>' + product.id + '</td>' +
-                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
-                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
-                            '<td><input type="text" class="form-control sale_quantity" class="editable" data-id="' + product.id + '" data-field="sale_quantity" name="sale_quantity[]" value="' + product.quantity + '"></td>' +
-                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="selling_price" value="' + product.selling_price + '"></td>' +
-                            '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
-                            '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
-                            '</tr>';
-                        $('input[name="sub_total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
-                        $('input[name="data_id"]').val(dataIdString);
-                        $('#manageSaleTable tbody').append(newRow);
-                        updateGrandTotal();
-                        updateSubTotal();
-                        updateDue();
-                        calculateGrandTotal();
+                            var newRow = '<tr><input type="hidden" name="data_id[]" value="'+ product.id +'" id="data_id">' +
+                                '<td>' + product.id + '</td>' +
+                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="serial_number" value="' + product.serial_number + '" readonly></td>' +
+                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="name" value="' + product.name + '"></td>' +
+                                '<td><input type="text" class="form-control sale_quantity" class="editable" data-id="' + product.id + '" data-field="sale_quantity" name="sale_quantity[]" value="' + product.quantity + '"></td><div id="total_quantity_message" class="error"></div>' +
+                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="selling_price" value="' + product.selling_price + '"></td>' +
+                                '<td><input type="text" class="form-control" class="editable" data-id="' + product.id + '" data-field="total" value="' + total + '" readonly></td>' +
+                                '<td><button class="btn btn-danger remove-row mt-3">Remove</button></td>' +
+                                '</tr>';
+                            $('input[name="sub_total"]').val(sub_total.toFixed(2)); // Assuming 2 decimal places for grand total
+                            $('input[name="data_id"]').val(dataIdString);
+                            $('#manageSaleTable tbody').append(newRow);
+                            updateGrandTotal();
+                            updateSubTotal();
+                            updateDue();
+                            calculateGrandTotal();
+                            $('#table').show();
+                            if(total_quantity >= 1){
+                                $('#total_quantity_message').text("");
+                                $('#submit').prop("disabled", false);
+                            }else{
+                                toastr.error("Product is out of Stock !", 'danger');
+                                $('#total_quantity_message').text("Product is out of stock !");
+                                $('#submit').prop("disabled", true);
+                            }
+                        }else{
+                            $('#table').hide();
+                        }
                     });
+                }else{
+                    $('#table').hide();
                 }
             }
         });

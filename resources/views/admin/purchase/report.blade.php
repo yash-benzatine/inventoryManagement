@@ -68,8 +68,7 @@
     });
     $(function() {
         var table = $('#purchaseTable').DataTable({
-
-            processing: true
+            processing: false
             , serverSide: true
             , ajax: {
                 url: "{{ route('purchase.report') }}"

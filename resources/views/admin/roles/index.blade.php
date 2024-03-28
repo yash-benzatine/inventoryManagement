@@ -15,9 +15,10 @@ Role Management
                 <table class="table align-items-center mb-0 mt-3" id="roleTable">
                     <thead>
                         <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Name</th>
-                            <th scope="col" style="width: 250px;">Action</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th class="col-md-7">Permission</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,7 +32,8 @@ Role Management
 <script>
     $(function() {
         var table = $('#roleTable').DataTable({
-            processing: true
+            processing: false,
+            order: [[0, "desc"]]
             , serverSide: true
             , ajax: {
                 url: "{{ route('roles.get-data') }}"
@@ -46,6 +48,10 @@ Role Management
                 }, {
                     data: 'name'
                     , name: 'name'
+                },
+                {
+                    data: 'permission'
+                    , name: 'permission'
                 }
                 , {
                     data: 'action'

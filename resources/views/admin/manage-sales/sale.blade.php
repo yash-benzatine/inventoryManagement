@@ -41,7 +41,7 @@
 <script type="text/javascript">
     $(function() {
         var table = $('#saleTable').DataTable({
-            processing: true
+            processing: false
             , serverSide: true
             , ajax: {
                 url: "{{ route('sale.get-data') }}"
@@ -59,7 +59,8 @@
                 }
                 , {
                     data: 'customer'
-                    , name: 'customer'
+                    , name: 'customer',
+                    orderable: false
                 }
                 , {
                     data: 'sub_total'

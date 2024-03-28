@@ -15,17 +15,10 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-12">
                                     <label for="name" class="form-label">Name</label>
                                     <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ $product->name }}">
                                     @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="form-label">image</label>
-                                    <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror">
-                                    @error('image')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -43,17 +36,24 @@
                                     @enderror
                                 </div>
                                 <!---->
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="purchase_price" class="form-label">Purchase Price</label>
                                     <input type="text" id="purchase_price" name="purchase_price" class="form-control @error('purchase_price') is-invalid @enderror" value="{{ $product->purchase_price }}">
                                     @error('purchase_price')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <label for="selling_price" class="form-label">Selling Price</label>
                                     <input type="text" id="selling_price" name="selling_price" class="form-control  @error('selling_price') is-invalid @enderror" value="{{ $product->selling_price }}">
                                     @error('selling_price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="text" id="quantity" name="quantity" class="form-control  @error('quantity') is-invalid @enderror" value="{{ $product->quantity }}">
+                                    @error('quantity')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -75,9 +75,19 @@
                                     @enderror
                                 </div>
 
+                                 <div class="form-group col-md-6">
+                                    <label class="form-label">image</label>
+                                    <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror">
+                                    @error('image')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <img src="{{ asset('admin/products/'. $product->image) }}" height="100" width="100">
+                                </div>
+
                                 <div class="d-flex justify-content-end mt-4">
-                                    <a href="{{ url()->previous() }}" class="btn btn-light m-0">Back</a>
-                                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Save</button>
+                                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Submit</button>
                                 </div>
                             </div>
                         </form>

@@ -136,7 +136,7 @@ class CustomerController extends Controller
 
     public function getData()
     {
-        $data = Customer::orderBy('id', 'DESC');
+        $data = Customer::select('*');
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('status', function ($row) {
@@ -147,7 +147,7 @@ class CustomerController extends Controller
             })
             ->addColumn('image', function ($row) {
                 if($row->image != ''){
-                    return '<img src="'. asset('admin/customer/'. $row->image) .'" height="50" width="50" class="border-radius-lg shadow-sm">';
+                    return '<a href="'. asset('admin/customer/'. $row->image) .'" target="_blank"><img src="'. asset('admin/customer/'. $row->image) .'" height="50" width="50" class="border-radius-lg shadow-sm"></a>';
                 }else{
                     return '-';
                 }

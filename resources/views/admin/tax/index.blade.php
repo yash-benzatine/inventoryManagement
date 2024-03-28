@@ -126,7 +126,9 @@
     });
     $(function() {
         var table = $('#taxTable').DataTable({
-            processing: true
+            processing: false,
+            order: [[0, "desc"]],
+            ordering: true
             , serverSide: true
             , ajax: {
                 url: "{{ route('tax.get-data') }}"

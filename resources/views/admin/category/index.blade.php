@@ -47,7 +47,9 @@
     });
     $(function() {
         var table = $('#categoryTable').DataTable({
-            processing: true
+            processing: false,
+            ordering: true,
+            order: [[0, "desc"]]
             , serverSide: true
             , ajax: {
                 url: "{{ route('category.get-data') }}"
@@ -70,7 +72,8 @@
                 }
                 , {
                     data: 'status'
-                    , name: 'status'
+                    , name: 'status',  
+                    orderable: false                          
                 },
                 // {
                 //     data: 'cat_id'
