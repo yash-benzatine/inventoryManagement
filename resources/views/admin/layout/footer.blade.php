@@ -30,7 +30,7 @@
                         <a href="https://www.benzatine.com/about-us" class="nav-link text-muted" target="_blank">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a href="https://www.benzatine.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
+                        <a href="https://www.benzatine.com/blogs" class="nav-link text-muted" target="_blank">Blog</a>
                     </li>
                     <li class="nav-item">
                         <a href="https://www.benzatine.com/privacy-policy" class="nav-link pe-0 text-muted" target="_blank">License</a>
