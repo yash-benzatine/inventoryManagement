@@ -264,7 +264,7 @@
 @endsection
 
 @section('page-script')
-<script src="./assets/js/plugins/chartjs.min.js"></script>
+<script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
 {{-- <script>
     var ctx1 = document.getElementById("chart-line").getContext("2d");
 
