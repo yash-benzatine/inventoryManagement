@@ -12,10 +12,17 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use App\Models\PurchaseHistory;
-
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class PurchaseController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:purchase-history|purchase-store', ['only' => ['index','store']]);
+         $this->middleware('permission:purchase-store', ['only' => ['create','store']]);
+    }
+
     public function index(Request $request)
     {
         $products = Product::where('status', 1)->get();

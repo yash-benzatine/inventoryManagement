@@ -15,10 +15,17 @@ use Illuminate\Support\Str;
 use App\Models\Tax;
 use Carbon\Carbon;
 use App\Models\SaleHistory;
-
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class SaleController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:sales-history|sale-store', ['only' => ['index','store']]);
+         $this->middleware('permission:sale-store', ['only' => ['create','store']]);
+    }
+
     public function index(Request $request)
     {
         $categories = Category::where(['status'=> 1, 'cat_id'=>0])->get();

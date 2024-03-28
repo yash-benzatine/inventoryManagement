@@ -10,13 +10,24 @@ use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Sale;
 use DB;
-
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    
+
+    function __construct()
+    {
+         $this->middleware('permission:product-list|product-create|product-edit|product-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:product-create', ['only' => ['create','store']]);
+         $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:product-delete', ['only' => ['destroy']]);
+    }
+
     public function index(Request $request)
     {
         return view("admin.product.index");
