@@ -36,6 +36,11 @@
             padding: 0 !important;
         }
     </style>
+    <script>
+        $( document ).ready(function() {
+            toggleDarkMode();
+        });
+    </script>
 </head>
 
 <body class="">
@@ -55,8 +60,8 @@
     <script src="{{asset('assets/js/core/popper.min.js')}}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/js-cookie/js.cookie.js') }}"></script>
-    <script src="{{ asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js') }}" async></script>
+    <script src="{{ asset('assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js') }}" async></script>
     <script src="{{asset('assets/js/core/bootstrap.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
@@ -72,7 +77,7 @@
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{{ asset('assets/js/argon-dashboard.js') }}"></script>
+    <script src="{{ asset('assets/js/argon-dashboard.js') }}" async></script>
 
     <script>
         // $(document).ready(function() {
@@ -345,8 +350,6 @@
             }
 
            
-            toggleDarkMode();
-
             // Event listener for toggling dark mode when the DOM is loaded
             document.addEventListener('DOMContentLoaded', function() {
                 // Add your additional initialization logic here, if needed
