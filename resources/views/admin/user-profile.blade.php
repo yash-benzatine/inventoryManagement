@@ -6,7 +6,7 @@
         <div class="row gx-4">
             <div class="col-auto">
                 <div class="avatar avatar-xl position-relative">
-                    <a href="{{ asset('admin/setting/'.auth()->user()->image ) }}"><img src="{{ auth()->user()->image ? asset('admin/setting/'. auth()->user()->image) : '/img/team-1.jpg' }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm"></a>
+                    <a href="{{ asset('admin/setting/'.auth()->user()->image ) }}" target="_blank"><img src="{{ auth()->user()->image ? asset('admin/setting/'. auth()->user()->image) : '/img/team-1.jpg' }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm"></a>
                 </div>
             </div>
             <div class="col-auto my-auto">
