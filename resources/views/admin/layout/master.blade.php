@@ -23,8 +23,6 @@
     <!-- CSS Files -->
     <link id="pagestyle" href="{{asset('assets/css/argon-dashboard.css')}}" rel="stylesheet" />
     <link href="{{asset('assets/css/argon.css')}}" rel="stylesheet" />
-    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> --}}
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"> -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css') }}">
@@ -33,8 +31,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Raleway'>
     <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
-<!-- <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui-pro@5.0.0/dist/css/coreui.min.css" rel="stylesheet" integrity="sha384-IWXc/Qn4K3kXUZMsZBceGfN84sg1+4HwBe2h5xrkXUexo51S/ImL+3wWnCHsh2uZ" crossorigin="anonymous"> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui-pro@5.0.0/dist/js/coreui.bundle.min.js" integrity="sha384-XhHOTYRsazIACXdXVSb4WMf8BMnDO9Pmd5nlutkwH4jryCW6NHABK94+4xk2qTYM" crossorigin="anonymous"></script>     -->
     <style>
         table.dataTable tbody th, table.dataTable tbody td {
             padding: 0 !important;
@@ -42,7 +38,7 @@
     </style>
 </head>
 
-<body class="{{ $class ?? '' }}">
+<body class="">
     <div class="min-height-300 bg-primary position-absolute w-100"></div>
     @include('admin.layout.sidebar')
 
@@ -58,7 +54,7 @@
     <!--   Core JS Files   -->
     <script src="{{asset('assets/js/core/popper.min.js')}}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-      <script src="{{ asset('assets/vendor/js-cookie/js.cookie.js') }}"></script>
+    <script src="{{ asset('assets/vendor/js-cookie/js.cookie.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js') }}"></script>
     <script src="{{asset('assets/js/core/bootstrap.min.js')}}"></script>
@@ -77,10 +73,6 @@
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="{{ asset('assets/js/argon-dashboard.js') }}"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
-
 
     <script>
         // $(document).ready(function() {
@@ -309,8 +301,6 @@
         // })
 
     </script>
-
-    <!-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="{{ asset('assets/vendor/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
@@ -322,54 +312,58 @@
     <script src="{{ asset('assets/vendor/datatables.net-select/js/dataTables.select.min.js') }}"></script>
     <script>
          // Function to enable dark mode
-    function enableDarkMode() {
-        // Add classes or styles to switch to dark mode
-        document.body.classList.add('g-sidenav-show');
-        document.body.classList.add('dark-mode');
-        document.body.classList.add('dark-version');
-        document.body.classList.add('bg-gray-600');
+            function enableDarkMode() {
+                // Add classes or styles to switch to dark mode
+                document.body.classList.add('g-sidenav-show');
+                document.body.classList.add('dark-mode');
+                document.body.classList.add('dark-version');
+                document.body.classList.add('bg-gray-600');
 
-        document.querySelector('.navbar').classList.replace('bg-white', 'bg-default');
-        document.querySelector('.sidenav').classList.replace('bg-white', 'bg-default');
-    }
+                document.querySelector('.navbar').classList.replace('bg-white', 'bg-default');
+                document.querySelector('.sidenav').classList.replace('bg-white', 'bg-default');
+            }
 
-    // Function to disable dark mode
-    function disableDarkMode() {
-        // Remove classes or styles to switch to light mode
-        document.body.classList.remove('g-sidenav-show');
-        document.body.classList.remove('dark-mode');
-        document.body.classList.remove('dark-version');
-        document.body.classList.remove('bg-gray-600');
+            // Function to disable dark mode
+            function disableDarkMode() {
+                // Remove classes or styles to switch to light mode
+                document.body.classList.remove('g-sidenav-show');
+                document.body.classList.remove('dark-mode');
+                document.body.classList.remove('dark-version');
+                document.body.classList.remove('bg-gray-600');
 
-        document.querySelector('.navbar').classList.replace('bg-default', 'bg-white');
-        document.querySelector('.sidenav').classList.replace('bg-default', 'bg-white');
-    }
+                document.querySelector('.navbar').classList.replace('bg-default', 'bg-white');
+                document.querySelector('.sidenav').classList.replace('bg-default', 'bg-white');
+            }
 
-    // Function to toggle dark mode
-    function toggleDarkMode() {
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            enableDarkMode(); // Enable dark mode if stored preference is 'enabled'
-        } else {
-            disableDarkMode(); // Disable dark mode if stored preference is not 'enabled'
-        }
-    }
+            // Function to toggle dark mode
+            function toggleDarkMode() {
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    enableDarkMode(); // Enable dark mode if stored preference is 'enabled'
+                } else {
+                    disableDarkMode(); // Disable dark mode if stored preference is not 'enabled'
+                }
+            }
 
-    // Event listener for toggling dark mode when the DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleDarkMode(); // Check and toggle dark mode based on user preference
-    });
+           
+            toggleDarkMode();
 
-    // Event listener for dark mode toggle button click
-    document.getElementById('theme-btn-dark').addEventListener('click', function() {
-        enableDarkMode(); // Enable dark mode
-        localStorage.setItem('darkMode', 'enabled'); // Store dark mode preference
-    });
+            // Event listener for toggling dark mode when the DOM is loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add your additional initialization logic here, if needed
+            });
 
-    // Event listener for light mode toggle button click
-    document.getElementById('theme-btn-light').addEventListener('click', function() {
-        disableDarkMode(); // Disable dark mode
-        localStorage.removeItem('darkMode'); // Remove dark mode preference
-    });
+            // Event listener for dark mode toggle button click
+            document.getElementById('theme-btn-dark').addEventListener('click', function() {
+                enableDarkMode(); // Enable dark mode
+                localStorage.setItem('darkMode', 'enabled'); // Store dark mode preference
+            });
+
+            // Event listener for light mode toggle button click
+            document.getElementById('theme-btn-light').addEventListener('click', function() {
+                disableDarkMode(); // Disable dark mode
+                localStorage.removeItem('darkMode'); // Remove dark mode preference
+            });
+            
     </script>
     <script>
         $.ajaxSetup({
@@ -418,6 +412,6 @@
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@coreui/coreui-pro@5.0.0/dist/js/coreui.min.js" integrity="sha384-P55oEtbpJcbKNSX0lgAPDYscDoCN5JqAnSPTimkcSTygCzQ6W8l60nRD09Vzfzx6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui-pro@5.0.0/dist/js/coreui.min.js" integrity="sha384-P55oEtbpJcbKNSX0lgAPDYscDoCN5JqAnSPTimkcSTygCzQ6W8l60nRD09Vzfzx6" crossorigin="anonymous"></script>
 </body>
 </html>

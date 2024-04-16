@@ -252,7 +252,7 @@
                             </div>
                             <div class="d-flex flex-column">
                                 <h6 class="mb-1 text-dark text-sm">{{ $product->Product->name }}</h6>
-                                <span class="text-xs">{{ $stock }} in stock, <span class="font-weight-bold">{{ $salesHistory }}+
+                                <span class="span-wrapper text-xs">{{ $stock }} in stock, <span class="font-weight-bold">{{ $salesHistory }}+
                                 sold</span></span>
                             </div>
                         </div>
@@ -289,90 +289,6 @@
 
 @section('page-script')
 <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
-{{-- <script>
-    var ctx1 = document.getElementById("chart-line").getContext("2d");
-
-    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-
-    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-    new Chart(ctx1, {
-        type: "line"
-        , data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-            , datasets: [{
-                label: "Mobile apps"
-                , tension: 0.4
-                , borderWidth: 0
-                , pointRadius: 0
-                , borderColor: "#5e72e4"
-                , backgroundColor: gradientStroke1
-                , borderWidth: 3
-                , fill: true
-                , data: [50, 40, 300, 220, 500, 250, 400, 230, 500]
-                , maxBarThickness: 6
-
-            }]
-        , }
-        , options: {
-            responsive: true
-            , maintainAspectRatio: false
-            , plugins: {
-                legend: {
-                    display: false
-                , }
-            }
-            , interaction: {
-                intersect: false
-                , mode: 'index'
-            , }
-            , scales: {
-                y: {
-                    grid: {
-                        drawBorder: false
-                        , display: true
-                        , drawOnChartArea: true
-                        , drawTicks: false
-                        , borderDash: [5, 5]
-                    }
-                    , ticks: {
-                        display: true
-                        , padding: 10
-                        , color: '#fbfbfb'
-                        , font: {
-                            size: 11
-                            , family: "Open Sans"
-                            , style: 'normal'
-                            , lineHeight: 2
-                        }
-                    , }
-                }
-                , x: {
-                    grid: {
-                        drawBorder: false
-                        , display: false
-                        , drawOnChartArea: false
-                        , drawTicks: false
-                        , borderDash: [5, 5]
-                    }
-                    , ticks: {
-                        display: true
-                        , color: '#ccc'
-                        , padding: 20
-                        , font: {
-                            size: 11
-                            , family: "Open Sans"
-                            , style: 'normal'
-                            , lineHeight: 2
-                        }
-                    , }
-                }
-            , }
-        , }
-    , });
-
-</script> --}}
 <script>
     // Sample data for demonstration (replace with actual data)
     var salesData = [100, 200, 150, 300, 400, 250, 350, 200, 300, 400, 500, 450]; // Sales data for each month
@@ -404,17 +320,15 @@
                     data: {!! json_encode($saleData) !!},     // Sales data
                     backgroundColor: 'rgba(54, 162, 235, 0.2)', // Fill color
                     borderColor: 'rgba(54, 162, 235, 1)', // Line color
-                    borderWidth: 1 // Line width
-                    , tension: 0.4
-                    , borderWidth: 0
-                    , pointRadius: 0
-                    , borderColor: "#5e72e4"
-                    , backgroundColor: gradientStroke1
-                    , borderWidth: 3
-                    , fill: true
-
-                }
-                , {
+                    borderWidth: 1,
+                    tension: 0.4, 
+                    borderWidth: 0, 
+                    pointRadius: 0, 
+                    borderColor: "#5e72e4",
+                    backgroundColor: gradientStroke1, 
+                    borderWidth: 3, 
+                    fill: true
+                }, {
                     label: 'Purchase', // Purchase dataset
                     data: {!! json_encode($purchaseData) !!}, // Purchase data
                     backgroundColor: 'rgba(255, 99, 132, 0.2)', // Fill color
