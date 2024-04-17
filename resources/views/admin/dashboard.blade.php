@@ -288,15 +288,11 @@
 @endsection
 
 @section('page-script')
-<script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
+<!-- <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script> -->
 <script>
-    // Sample data for demonstration (replace with actual data)
-    var salesData = [100, 200, 150, 300, 400, 250, 350, 200, 300, 400, 500, 450]; // Sales data for each month
-    var purchaseData = [80, 150, 120, 250, 350, 200, 300, 180, 280, 350, 450, 400]; // Purchase data for each month
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // Months
-
     // Get the canvas element
     var ctx = document.getElementById('chart-line').getContext('2d');
+    var myChart;
     var gradientStroke1 = ctx.createLinearGradient(0, 230, 0, 50);
 
     gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
@@ -309,99 +305,106 @@
     gradientStroke.addColorStop(0.4, 'rgba(255, 99, 132, 0.2)'); // Red color with lower opacity
     gradientStroke.addColorStop(0, 'rgba(255, 99, 132, 0)'); // Transparent
 
+    // alert(localStorage.getItem('darkMode'));
+    // alert(yColor);
 
     // Create the line chart
-    var myChart = new Chart(ctx, {
-        type: 'line'
-        , data: {
-            labels: {!! json_encode($months) !!}, // X-axis labels (months)
-            datasets: [{
-                    label: 'Sales', // Sales dataset
-                    data: {!! json_encode($saleData) !!},     // Sales data
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)', // Fill color
-                    borderColor: 'rgba(54, 162, 235, 1)', // Line color
-                    borderWidth: 1,
-                    tension: 0.4, 
-                    borderWidth: 0, 
-                    pointRadius: 0, 
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1, 
-                    borderWidth: 3, 
-                    fill: true
-                }, {
-                    label: 'Purchase', // Purchase dataset
-                    data: {!! json_encode($purchaseData) !!}, // Purchase data
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)', // Fill color
-                    borderColor: 'rgba(255, 99, 132, 1)', // Line color
-                    borderWidth: 1 // Line width
-                    , tension: 0.4
-                    , borderWidth: 0
-                    , pointRadius: 0
-                    , borderColor: "#ff0000" // Red color
-                    , backgroundColor: gradientStroke
-                    , borderWidth: 3
-                    , fill: true
-
-                }
-            ]
+    function createChart(yColor) {
+        if (myChart) {
+            // If a chart instance exists, destroy it before creating a new one
+            myChart.destroy();
         }
-        , options: {
-            responsive: true
-            , maintainAspectRatio: false
-            , plugins: {
-                legend: {
-                    display: false
-                , }
+        myChart = new Chart(ctx, {
+            type: 'line'
+            , data: {
+                labels: {!! json_encode($months) !!}, // X-axis labels (months)
+                datasets: [{
+                        label: 'Sales', // Sales dataset
+                        data: {!! json_encode($saleData) !!},     // Sales data
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Fill color
+                        borderColor: 'rgba(54, 162, 235, 1)', // Line color
+                        borderWidth: 1,
+                        tension: 0.4, 
+                        borderWidth: 0, 
+                        pointRadius: 0, 
+                        borderColor: "#5e72e4",
+                        backgroundColor: gradientStroke1, 
+                        borderWidth: 3, 
+                        fill: true
+                    }, {
+                        label: 'Purchase', // Purchase dataset
+                        data: {!! json_encode($purchaseData) !!}, // Purchase data
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)', // Fill color
+                        borderColor: 'rgba(255, 99, 132, 1)', // Line color
+                        borderWidth: 1 // Line width
+                        , tension: 0.4
+                        , borderWidth: 0
+                        , pointRadius: 0
+                        , borderColor: "#ff0000" // Red color
+                        , backgroundColor: gradientStroke
+                        , borderWidth: 3
+                        , fill: true
+
+                    }
+                ]
             }
-            , interaction: {
-                intersect: false
-                , mode: 'index'
-            , }
-            , scales: {
-                y: {
-                    grid: {
-                        drawBorder: false
-                        , display: true
-                        , drawOnChartArea: true
-                        , drawTicks: false
-                        , borderDash: [5, 5]
-                    }
-                    , ticks: {
-                        display: true
-                        , padding: 10
-                        , color: '#fbfbfb'
-                        , font: {
-                            size: 11
-                            , family: "Open Sans"
-                            , style: 'normal'
-                            , lineHeight: 2
-                        }
+            , options: {
+                responsive: true
+                , maintainAspectRatio: false
+                , plugins: {
+                    legend: {
+                        display: false
                     , }
                 }
-                , x: {
-                    grid: {
-                        drawBorder: false
-                        , display: false
-                        , drawOnChartArea: false
-                        , drawTicks: false
-                        , borderDash: [5, 5]
-                    }
-                    , ticks: {
-                        display: true
-                        , color: '#ccc'
-                        , padding: 20
-                        , font: {
-                            size: 11
-                            , family: "Open Sans"
-                            , style: 'normal'
-                            , lineHeight: 2
+                , interaction: {
+                    intersect: false
+                    , mode: 'index'
+                , }
+                , scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false
+                            , display: true
+                            , drawOnChartArea: true
+                            , drawTicks: false
+                            , borderDash: [5, 5]
                         }
-                    , }
-                }
+                        , ticks: {
+                            display: true
+                            , padding: 10
+                            // , color: yColor
+                            , font: {
+                                size: 11
+                                , family: "Open Sans"
+                                , style: 'normal'
+                                , lineHeight: 2
+                            }
+                        , }
+                    }
+                    , x: {
+                        grid: {
+                            drawBorder: false
+                            , display: true
+                            , drawOnChartArea: false
+                            , drawTicks: false
+                            , borderDash: [5, 5]
+                        }
+                        , ticks: {
+                            display: true
+                            , color: '#ccc'
+                            , padding: 20
+                            , font: {
+                                size: 11
+                                , family: "Open Sans"
+                                , style: 'normal'
+                                , lineHeight: 2
+                            }
+                        , }
+                    }
+                , }
             , }
-        , }
-    });
-
+        });
+    }
+    createChart(yColor);
 </script>
-
 @endsection

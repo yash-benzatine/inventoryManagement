@@ -55,7 +55,6 @@
         </div>
     </main>
 
-    @yield('page-script')
     <!--   Core JS Files   -->
     <script src="{{asset('assets/js/core/popper.min.js')}}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
@@ -315,7 +314,10 @@
     <script src="{{ asset('assets/vendor/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
+
     <script>
+        let yColor = "";
          // Function to enable dark mode
             function enableDarkMode() {
                 // Add classes or styles to switch to dark mode
@@ -349,24 +351,22 @@
                 }
             }
 
-           
-            // Event listener for toggling dark mode when the DOM is loaded
-            document.addEventListener('DOMContentLoaded', function() {
-                // Add your additional initialization logic here, if needed
-            });
-
             // Event listener for dark mode toggle button click
             document.getElementById('theme-btn-dark').addEventListener('click', function() {
                 enableDarkMode(); // Enable dark mode
                 localStorage.setItem('darkMode', 'enabled'); // Store dark mode preference
+                yColor = "white";
+                // createChart(yColor);
             });
 
             // Event listener for light mode toggle button click
             document.getElementById('theme-btn-light').addEventListener('click', function() {
                 disableDarkMode(); // Disable dark mode
                 localStorage.removeItem('darkMode'); // Remove dark mode preference
+                yColor = "black";
+                // createChart(yColor);
             });
-            
+
     </script>
     <script>
         $.ajaxSetup({
@@ -416,5 +416,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui-pro@5.0.0/dist/js/coreui.min.js" integrity="sha384-P55oEtbpJcbKNSX0lgAPDYscDoCN5JqAnSPTimkcSTygCzQ6W8l60nRD09Vzfzx6" crossorigin="anonymous"></script>
+
+    @yield('page-script')
 </body>
 </html>

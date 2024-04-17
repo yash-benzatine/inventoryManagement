@@ -153,6 +153,11 @@ class HomeController extends Controller
         if ($previousMonthUserCount != 0) {
             // Calculate the percentage change
             $userPercentage = (($currentMonthUserCount - $previousMonthUserCount) / $previousMonthUserCount) * 100;
+            if($userPercentage >= 100){
+                $userPercentage = 100;
+            }elseif($userPercentage <= 0){
+                $userPercentage = 0;
+            }
         } else {
             // Handle division by zero
             if ($currentMonthUserCount != 0) {
@@ -222,6 +227,11 @@ class HomeController extends Controller
         // Calculate the percentage change
         if ($previousQuarterSales != 0) {
             $salePercentage = ($currentQuarterSales - $previousQuarterSales) / $previousQuarterSales * 100;
+            if($salePercentage >= 100){
+                $salePercentage = 100;
+            }elseif($salePercentage <= 0){
+                $salePercentage = 0;
+            }
         } else {
             $salePercentage = ($currentQuarterSales != 0) ? 100 : 0; // Avoid division by zero
         }
@@ -243,6 +253,9 @@ class HomeController extends Controller
         if ($totalPurchaseLastMonth != 0) {
             // Calculate the percentage
             $purchasePercentage = (($totalPurchaseCurrentMonth - $totalPurchaseLastMonth) / $totalPurchaseLastMonth) * 100;
+            if($purchasePercentage >= 100){
+                $purchasePercentage = 100;
+            }
         } else {
             if ($totalPurchaseCurrentMonth != 0) {
                 // Handle the case where last month's purchase is zero but current month's purchase is not
@@ -269,6 +282,11 @@ class HomeController extends Controller
         if ($previousWeekTotalPayment != 0) {
             // Calculate the percentage change
             $salePaymentPercentage = (($currentWeekTotalPayment - $previousWeekTotalPayment) / $previousWeekTotalPayment) * 100;
+            if($salePaymentPercentage >= 100){
+                $salePaymentPercentage = 100;
+            }elseif($salePaymentPercentage <= 0){
+                $salePaymentPercentage = 0;
+            }
         } else {
             // Handle division by zero
             if ($currentWeekTotalPayment != 0) {
